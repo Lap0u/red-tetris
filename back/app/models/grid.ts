@@ -10,7 +10,7 @@ export default class Grid {
   constructor(piecesList: Piece[]) {
     this.width = env.get('GRID_WIDTH')
     this.height = env.get('GRID_HEIGHT')
-    this.grid = []
+    this.grid = Array.from(Array(this.height), () => new Array(this.width).fill(0))
     this.currentPiece = undefined
     for (let i = 0; i < this.width; i++) {
       this.grid[i] = []
