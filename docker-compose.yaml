@@ -32,5 +32,33 @@ services:
     networks:
       - main
 
+  postgres:
+    image: postgres:16.1-alpine3.19
+    container_name: postgres
+    ports:
+      - 5432:5432
+    env_file:
+      - .env
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - main
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    ports:
+      - 8080:8080
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    networks:
+      - main
+
+volumes:
+  postgres:
+    name: postgres-volume
+
 networks:
   main:

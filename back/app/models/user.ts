@@ -1,30 +1,27 @@
-import { DateTime } from 'luxon'
-import { withAuthFinder } from '@adonisjs/auth'
-import hash from '@adonisjs/core/services/hash'
-import { compose } from '@adonisjs/core/helpers'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
-
-const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
-  uids: ['email'],
-  passwordColumnName: 'password',
-})
-
-export default class User extends compose(BaseModel, AuthFinder) {
+import { BaseModel, column, manyToMany } from '@adonisjs/lucid/orm'
+import Game from '#models/game'
+import type { ManyToMany } from '@adonisjs/lucid/types/relations'
+import Piece from './piece.js'
+export default class User extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
   @column()
-  declare fullName: string | null
+  declare username: string
 
   @column()
-  declare email: string
+  declare history: string[]
 
-  @column()
-  declare password: string
+  @manyToMany(() => Game)
+  declare games: ManyToMany<typeof Game>
 
-  @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime
-
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime | null
+  grid: number[][]
+  currentPiece: Piece
+  pieceList: Piece[]
+  constructor() {
+    super()
+    this.grid = []
+    this.pieceList = []
+    this.currentPiece = new Piece(0, 0, 0, 'line')
+  }
 }
