@@ -10,7 +10,6 @@ test('Grid is properly constructed', async ({ assert }) => {
   const grid = new Grid(pieceList)
   assert.equal(grid.width, 10)
   assert.equal(grid.height, 20)
-  console.error(grid.grid)
   assert.deepEqual(grid.grid, [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
