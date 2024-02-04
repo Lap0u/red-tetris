@@ -6,6 +6,7 @@ export default class Piece {
   id: number
   x: number
   y: number
+  pieceSpectra: number[][]
   type: PieceType
   status: 'falling' | 'landed' | 'undestroyable'
   rotation: RotateType
@@ -16,20 +17,68 @@ export default class Piece {
     this.type = type
     this.status = 'falling'
     this.rotation = 0
+    this.pieceSpectra = this.#getPieceSpectra(this.type)
   }
-  move(x: number, y: number, move: MoveType) {
+  #getPieceSpectra(type: PieceType) {
+    switch (type) {
+      case 'line':
+        return [
+          [0, 0, 0, 0],
+          [1, 1, 1, 1],
+          [0, 0, 0, 0],
+          [0, 0, 0, 0],
+        ]
+      case 'square':
+        return [
+          [0, 1, 1, 0],
+          [0, 1, 1, 0],
+          [0, 0, 0, 0],
+        ]
+      case 'l':
+        return [
+          [1, 0, 0],
+          [1, 1, 1],
+          [0, 0, 0],
+        ]
+      case 'reverse_l':
+        return [
+          [0, 0, 1],
+          [1, 1, 1],
+          [0, 0, 0],
+        ]
+      case 't':
+        return [
+          [0, 1, 0],
+          [1, 1, 1],
+          [0, 0, 0],
+        ]
+      case 'z':
+        return [
+          [1, 1, 0],
+          [0, 1, 1],
+          [0, 0, 0],
+        ]
+      case 'reverse_z':
+        return [
+          [0, 1, 1],
+          [1, 1, 0],
+          [0, 0, 0],
+        ]
+    }
+  }
+  move(move: MoveType) {
     switch (move) {
       case 'left':
-        this.x -= x
+        this.x -= 1
         break
       case 'right':
-        this.x += x
+        this.x += 1
         break
       case 'down':
-        this.y += y
+        this.y += 1
         break
       case 'fall':
-        this.y += y
+        this.y += 1
         this.status = 'landed'
         break
     }

@@ -15,9 +15,7 @@ export default class User extends BaseModel {
   @manyToMany(() => Game)
   declare games: ManyToMany<typeof Game>
 
-  grid: number[][]
-  currentPiece: Piece
-  pieceList: Piece[]
+  grid: Grid
   constructor() {
     super()
     this.grid = []
