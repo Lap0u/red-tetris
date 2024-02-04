@@ -43,4 +43,49 @@ test.group('Piece move', () => {
     piece.move('down')
     assert.equal(piece.y, 19)
   })
+  test('Line falling properly', async ({ assert }) => {
+    const piece = new Piece(1, 0, 0, 'line')
+    piece.addGrid(grid)
+    piece.move('fall')
+    assert.equal(piece.y, 18)
+  })
+  test('Line falling properly when there is an obstacle', async ({ assert }) => {
+    const piece = new Piece(1, 0, 0, 'line')
+    grid.grid[5] = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    piece.addGrid(grid)
+    piece.move('fall')
+    assert.equal(piece.y, 3)
+  })
+  test('T falling properly when there is an obstacle', async ({ assert }) => {
+    const piece = new Piece(1, 0, 0, 't')
+    grid.grid[5] = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1]
+    piece.addGrid(grid)
+    piece.move('fall')
+    assert.equal(piece.y, 3)
+  })
+  test('Rotated T falling properly when there is an obstacle', async ({ assert }) => {
+    const piece = new Piece(1, 0, 0, 't')
+    grid.grid[5] = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1]
+    piece.addGrid(grid)
+    piece.rotate('left')
+    piece.rotate('left')
+    piece.move('fall')
+    assert.equal(piece.y, 3)
+  })
+  test('-90 deg rotated T falling properly when there is an obstacle', async ({ assert }) => {
+    const piece = new Piece(1, 0, 0, 't')
+    grid.grid[5] = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1]
+    piece.addGrid(grid)
+    piece.rotate('left')
+    piece.move('fall')
+    assert.equal(piece.y, 17)
+  })
+  test('+90 deg rotated T falling properly when there is an obstacle', async ({ assert }) => {
+    const piece = new Piece(1, 0, 0, 't')
+    grid.grid[5] = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1]
+    piece.addGrid(grid)
+    piece.rotate('right')
+    piece.move('fall')
+    assert.equal(piece.y, 3)
+  })
 })

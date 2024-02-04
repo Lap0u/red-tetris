@@ -6,9 +6,11 @@ export default class Grid {
   height: number
   grid: number[][]
   piecesList: Piece[]
+  gameStatus: 'waiting' | 'pending' | 'ended'
   currentPiece: Piece | undefined
   constructor(piecesList: Piece[]) {
     this.width = env.get('GRID_WIDTH')
+    this.gameStatus = 'waiting'
     this.height = env.get('GRID_HEIGHT')
     this.grid = Array.from(Array(this.height), () => new Array(this.width).fill(0))
     this.currentPiece = undefined
@@ -57,7 +59,9 @@ export default class Grid {
     return this.grid
   }
   gameLoop() {
-    setInterval(() => {
+    this.gameStatus = 'pending'
+    const id = setInterval(() => {
+      if (this.gameStatus === 'ended') clearInterval(id)
       // If there is no current piece, we take the next one from the list and check if lines should be removed
       if (this.currentPiece === undefined) {
         this.currentPiece = this.piecesList.shift()
@@ -67,20 +71,25 @@ export default class Grid {
         }
         // If the piceceList is empty, the game is over
         if (this.currentPiece === undefined) {
+          this.gameStatus = 'ended'
+          clearInterval(id)
           return
         }
       }
       // We check if the game is over
       if (this.isFull()) {
+        this.gameStatus = 'ended'
+        clearInterval(id)
         return
       }
-      // We move the piece down
-      this.currentPiece.move('down')
+      // We move the piece down and check if it has landed
+      if (this.currentPiece.move('down') === -1) this.currentPiece.status = 'landed'
+
       // If the piece has landed, we add it to the grid
       if (this.currentPiece.status === 'landed') {
         this.savePieceToGrid(this.currentPiece)
         this.currentPiece = undefined
       }
-    }, 1000)
+    }, 100)
   }
 }

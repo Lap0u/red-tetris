@@ -79,24 +79,30 @@ export default class Piece {
     switch (move) {
       case 'left':
         this.x -= 1
-        if (!this.#isMovePossible()) this.x += 1
-        break
+        if (!this.#isMovePossible()) {
+          this.x += 1
+          return -1
+        }
+        return 0
       case 'right':
         this.x += 1
-        if (!this.#isMovePossible()) this.x -= 1
-        break
+        if (!this.#isMovePossible()) {
+          this.x -= 1
+          return -1
+        }
+        return 0
       case 'down':
         this.y += 1
-        if (!this.#isMovePossible()) this.y -= 1
-        break
+        if (!this.#isMovePossible()) {
+          this.y -= 1
+          return -1
+        }
+        return 0
       case 'fall':
-        const savedY = this.y
-        this.y = this.GRID_HEIGHT - this.shape.length
-        if (!this.#isMovePossible()) this.y = savedY
-        else this.status = 'landed'
-        break
+        while (this.move('down') !== -1);
     }
   }
+
   #isMovePossible() {
     if (!this.grid) return false
     for (let i = 0; i < this.shape.length; i++) {
