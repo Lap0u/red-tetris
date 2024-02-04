@@ -45,9 +45,9 @@ export default class Grid {
     }
   }
   savePieceToGrid(piece: Piece) {
-    for (let i = 0; i < piece.pieceSpectra.length; i++) {
-      for (let j = 0; j < piece.pieceSpectra[i].length; j++) {
-        if (piece.pieceSpectra[i][j] === 1) {
+    for (let i = 0; i < piece.shape.length; i++) {
+      for (let j = 0; j < piece.shape[i].length; j++) {
+        if (piece.shape[i][j] === 1) {
           this.grid[piece.y + i][piece.x + j] = 1
         }
       }

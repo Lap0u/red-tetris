@@ -79,18 +79,39 @@ export default class Piece {
     switch (move) {
       case 'left':
         this.x -= 1
+        if (!this.#isMovePossible()) this.x += 1
         break
       case 'right':
         this.x += 1
+        if (!this.#isMovePossible()) this.x -= 1
         break
       case 'down':
         this.y += 1
+        if (!this.#isMovePossible()) this.y -= 1
         break
       case 'fall':
-        this.y += 1
-        this.status = 'landed'
+        const savedY = this.y
+        this.y = this.GRID_HEIGHT - this.shape.length
+        if (!this.#isMovePossible()) this.y = savedY
+        else this.status = 'landed'
         break
     }
+  }
+  #isMovePossible() {
+    if (!this.grid) return false
+    for (let i = 0; i < this.shape.length; i++) {
+      for (let j = 0; j < this.shape[0].length; j++) {
+        if (this.shape[i][j] === 1) {
+          if (this.x + j < 0 || this.x + j >= this.GRID_WIDTH || this.y + i >= this.GRID_HEIGHT) {
+            return false
+          }
+          if (this.grid.grid[this.y + i][this.x + j] === 1) {
+            return false
+          }
+        }
+      }
+    }
+    return true
   }
   rotate(rotation: RotateType) {
     if (this.type === 'square') return
