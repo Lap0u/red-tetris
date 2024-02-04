@@ -19,6 +19,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   LOG_LEVEL: Env.schema.string(),
   GRID_WIDTH: Env.schema.number(),
   GRID_HEIGHT: Env.schema.number(),
+  MAX_PIECE_LIST_LENGTH: Env.schema.number(),
 
   /*
   |----------------------------------------------------------
