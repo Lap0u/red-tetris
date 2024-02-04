@@ -9,7 +9,7 @@ export default class Piece {
   id: number
   x: number
   y: number
-  pieceSpectra: number[][]
+  shape: number[][]
   type: PieceType
   status: 'falling' | 'landed' | 'undestroyable'
   GRID_WIDTH: number
@@ -21,14 +21,14 @@ export default class Piece {
     this.y = y
     this.type = type
     this.status = 'falling'
-    this.pieceSpectra = this.#getPieceSpectra(this.type)
+    this.shape = this.#getshape(this.type)
     this.GRID_WIDTH = env.get('GRID_WIDTH')
     this.GRID_HEIGHT = env.get('GRID_HEIGHT')
   }
   addGrid(grid: Grid) {
     this.grid = grid
   }
-  #getPieceSpectra(type: PieceType) {
+  #getshape(type: PieceType) {
     switch (type) {
       case 'line':
         return [
@@ -95,29 +95,35 @@ export default class Piece {
   rotate(rotation: RotateType) {
     if (this.type === 'square') return
     if (rotation === 'left') this.#rotateMatrixLeft()
-    if (rotation === 'left') this.#rotateMatrixRight()
+    if (rotation === 'right') this.#rotateMatrixRight()
   }
   #rotateMatrixLeft() {
-    const newMatrix: number[][] = []
-    for (let i = 0; i < this.pieceSpectra.length; i++) {
-      for (let j = 0; j < this.pieceSpectra.length; j++) {
-        newMatrix[i][j] = this.pieceSpectra[j][i]
+    const rows = this.shape.length
+    const cols = this.shape[0].length
+    const newMatrix: number[][] = Array.from({ length: cols }, () => [])
+
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        newMatrix[cols - j - 1][i] = this.shape[i][j]
       }
     }
     if (!this.#willCollide(newMatrix)) {
-      this.pieceSpectra = newMatrix
+      this.shape = newMatrix
     }
   }
 
   #rotateMatrixRight() {
-    const newMatrix: number[][] = []
-    for (let i = 0; i < this.pieceSpectra.length; i++) {
-      for (let j = 0; j < this.pieceSpectra.length; j++) {
-        newMatrix[i][j] = this.pieceSpectra[this.pieceSpectra.length - j - 1][i]
+    const rows = this.shape.length
+    const cols = this.shape[0].length
+    const newMatrix: number[][] = Array.from({ length: cols }, () => [])
+
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        newMatrix[j][rows - 1 - i] = this.shape[i][j]
       }
     }
     if (!this.#willCollide(newMatrix)) {
-      this.pieceSpectra = newMatrix
+      this.shape = newMatrix
     }
   }
   #willCollide(newMatrix: number[][]) {
