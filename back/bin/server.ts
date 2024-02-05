@@ -11,7 +11,19 @@
 
 import 'reflect-metadata'
 import { Ignitor, prettyPrintError } from '@adonisjs/core'
+import { Server } from 'socket.io'
 
+const io = new Server({
+  cors: {
+    origin: '*',
+  },
+})
+
+io.on('connection', (socket) => {
+  console.log('a user connected')
+})
+
+io.listen(3333)
 /**
  * URL to the application root. AdonisJS need it to resolve
  * paths to file and directories for scaffolding commands

@@ -58,10 +58,13 @@
     "@adonisjs/lucid": "^20.1.0",
     "@adonisjs/session": "^7.1.1",
     "@vinejs/vine": "^1.7.1",
+    "adonis-websocket": "^1.0.4",
     "better-sqlite3": "^9.4.0",
+    "express": "^4.18.2",
     "luxon": "^3.4.4",
     "pg": "^8.11.3",
-    "reflect-metadata": "^0.2.1"
+    "reflect-metadata": "^0.2.1",
+    "socket.io": "^4.7.4"
   },
   "eslintConfig": {
     "extends": "@adonisjs/eslint-config/app"

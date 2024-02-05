@@ -11,8 +11,8 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      - ./front:/front
-      - /front/node_modules
+      - ./front:/app
+      - /app/node_modules
     networks:
       - main
 
