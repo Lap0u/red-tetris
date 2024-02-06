@@ -64,15 +64,6 @@ const testGrid2 = [
   [1, 1, 1, 1, 1, 0, 1, 0, 0, 0],
 ]
 
-io.on('connection', (socket) => {
-  console.log('a user connected')
-  io.emit('newGrid', testGrid)
-  socket.on('grid', () => {
-    console.log('grid from front')
-    io.emit('newGrid', testGrid2)
-  })
-})
-
 io.listen(3334)
 /**
  * URL to the application root. AdonisJS need it to resolve

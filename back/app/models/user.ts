@@ -1,7 +1,7 @@
 import { BaseModel, column, manyToMany } from '@adonisjs/lucid/orm'
 import Game from '#models/game'
 import type { ManyToMany } from '@adonisjs/lucid/types/relations'
-import Piece from './piece.js'
+import { Socket } from 'socket.io'
 export default class User extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
@@ -15,11 +15,9 @@ export default class User extends BaseModel {
   @manyToMany(() => Game)
   declare games: ManyToMany<typeof Game>
 
-  grid: Grid
+  socket: Socket | null
   constructor() {
     super()
-    this.grid = []
-    this.pieceList = []
-    this.currentPiece = new Piece(0, 0, 0, 'line')
+    this.socket = null
   }
 }
