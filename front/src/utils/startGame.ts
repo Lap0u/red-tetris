@@ -1,6 +1,6 @@
 const startGame = () => {
   const serverStartGame = async () => {
-    const res = await fetch('http://localhost:3333/game/newGame', {
+    const res = await fetch('http://localhost:3333/game/new', {
       method: 'POST',
     });
     const data = await res.json();
