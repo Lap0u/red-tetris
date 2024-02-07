@@ -8,9 +8,9 @@ const createUser = (username: string) => {
       body: JSON.stringify({ username: username }),
     });
     const data = await res.json();
-    console.log(data);
-  }
-  create(username);
-}
+    return data;
+  };
+  return create(username);
+};
 
 export default createUser;

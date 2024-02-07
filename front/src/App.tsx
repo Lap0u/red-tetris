@@ -3,9 +3,7 @@ import WelcomePage from './pages/welcomePage';
 
 export const socket = socketIO.connect('http://localhost:3334');
 const App = () => {
-  return (
-    <WelcomePage  />
-    )
-}
+  return <WelcomePage />;
+};
 
-export default App
+export default App;

@@ -9,13 +9,19 @@ const WelcomePage = () => {
   };
 
   const handleButtonClick = () => {
+    const user = createUser(username);
     // Call your API here using the username
     console.log(`Calling API with username: ${username}`);
+    console.log('user', user);
   };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
-      <img src="/red-tetris-logo.png" alt="Tetris logo" className="object-cover mb-32" />
+      <img
+        src="/red-tetris-logo.png"
+        alt="Tetris logo"
+        className="object-cover mb-32"
+      />
       <input
         type="text"
         value={username}
@@ -24,9 +30,8 @@ const WelcomePage = () => {
         className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
       />
       <button
-        onClick={() => createUser(username)}
-        className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-      >
+        onClick={handleButtonClick}
+        className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">
         Enter tetris' world
       </button>
     </div>

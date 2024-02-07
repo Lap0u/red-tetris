@@ -5,8 +5,8 @@ const startGame = () => {
     });
     const data = await res.json();
     console.log(data);
-  }
+  };
   serverStartGame();
-}
+};
 
 export default startGame;

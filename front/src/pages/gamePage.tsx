@@ -12,15 +12,14 @@ const GamePage = () => {
     });
   }, [socket]);
 
-
   return (
-    <div className='text-red-500 text-4xl flex flex-col gap-y-4'>
+    <div className="text-red-500 text-4xl flex flex-col gap-y-4">
       <GameGrid grid={newGrid} />
       <button onClick={startGame}>startGame</button>
       <button onClick={() => socket.emit('grid', {})}>newGrid</button>
       <button onClick={() => createUser('clement')}>create user</button>
     </div>
-  )
-}
+  );
+};
 
-export default GamePage
+export default GamePage;
