@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
 import createUser from '../utils/createUser';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../store/usersSlice';
+import { useNavigate } from 'react-router-dom';
 
 const WelcomePage = () => {
   const [username, setUsername] = useState('');
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
   };
 
-  const handleButtonClick = () => {
-    const user = createUser(username);
-    // Call your API here using the username
-    console.log(`Calling API with username: ${username}`);
-    console.log('user', user);
+  const handleButtonClick = async () => {
+    const user = await createUser(username);
+    dispatch(setUser(user));
+    navigate('/lobby');
   };
 
   return (

@@ -6,6 +6,7 @@ import { socket } from '../App';
 
 const GamePage = () => {
   const [newGrid, setNewGrid] = useState<number[][]>([]);
+
   useEffect(() => {
     socket.on('newGrid', (grid: number[][]) => {
       setNewGrid(grid);
