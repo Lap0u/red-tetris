@@ -3,6 +3,7 @@ import createUser from '../utils/createUser';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../store/usersSlice';
 import { useNavigate } from 'react-router-dom';
+import MyButton from '../components/MyButton';
 
 const WelcomePage = () => {
   const [username, setUsername] = useState('');
@@ -33,11 +34,7 @@ const WelcomePage = () => {
         placeholder="Enter your username"
         className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
       />
-      <button
-        onClick={handleButtonClick}
-        className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">
-        Enter tetris' world
-      </button>
+      <MyButton onClick={handleButtonClick} text="Enter tetris' world" />
     </div>
   );
 };

@@ -8,6 +8,7 @@ export default class extends BaseSchema {
       table.increments('id')
 
       table.string('status').notNullable()
+      table.integer('user_id').unsigned().references('users.id').onDelete('CASCADE') // delete game when user is deleted
     })
   }
 

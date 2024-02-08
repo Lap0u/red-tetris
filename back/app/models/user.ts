@@ -1,6 +1,6 @@
-import { BaseModel, column, manyToMany } from '@adonisjs/lucid/orm'
+import { BaseModel, column, hasMany, manyToMany } from '@adonisjs/lucid/orm'
 import Game from '#models/game'
-import type { ManyToMany } from '@adonisjs/lucid/types/relations'
+import type { HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
 import { Socket } from 'socket.io'
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -14,6 +14,9 @@ export default class User extends BaseModel {
 
   @manyToMany(() => Game)
   declare games: ManyToMany<typeof Game>
+
+  @hasMany(() => Game)
+  declare ownedGames: HasMany<typeof Game>
 
   socket: Socket | null
   constructor() {

@@ -10,5 +10,8 @@ export default class Game extends BaseModel {
   declare status: 'waiting' | 'playing' | 'finished'
 
   @manyToMany(() => User)
-  declare skills: ManyToMany<typeof User>
+  declare users: ManyToMany<typeof User>
+
+  @column()
+  declare userId: number
 }

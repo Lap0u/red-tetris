@@ -1,24 +1,16 @@
-import { useEffect, useState } from 'react';
-import GameGrid from '../components/GameGrid';
-import startGame from '../utils/startGame';
-import createUser from '../utils/createUser';
-import { socket } from '../App';
+import createGame from '../utils/createGame';
+import MyButton from '../components/MyButton';
+import CurrentGamesList from '../components/CurrentGamesList';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
 
 const GamePage = () => {
-  const [newGrid, setNewGrid] = useState<number[][]>([]);
-
-  useEffect(() => {
-    socket.on('newGrid', (grid: number[][]) => {
-      setNewGrid(grid);
-    });
-  }, [socket]);
-
+  const user = useSelector((state: RootState) => state.users.user);
+  if (user === null) return null;
   return (
-    <div className="text-red-500 text-4xl flex flex-col gap-y-4">
-      <GameGrid grid={newGrid} />
-      <button onClick={startGame}>startGame</button>
-      <button onClick={() => socket.emit('grid', {})}>newGrid</button>
-      <button onClick={() => createUser('clement')}>create user</button>
+    <div className="text-red-500 text-4xl flex justify-center items-center gap-x-48 h-screen">
+      <MyButton onClick={() => createGame(user?.id)} text="Create Game" />
+      <CurrentGamesList />
     </div>
   );
 };
