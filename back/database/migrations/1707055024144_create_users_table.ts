@@ -8,6 +8,7 @@ export default class extends BaseSchema {
       table.increments('id')
 
       table.string('username').notNullable()
+      table.string('socket_id').notNullable()
       table.json('history').nullable()
     })
   }

@@ -20,11 +20,14 @@ router.get('/', async () => {
 router
   .group(() => {
     router.post('/new', [GamesController, 'create'])
+    router.get('/available', [GamesController, 'getAvailable'])
+    router.get('/:gameId', [GamesController, 'get'])
   })
   .prefix('game')
 
 router
   .group(() => {
     router.post('/create', [UsersController, 'create'])
+    router.post('/remove', [UsersController, 'remove'])
   })
   .prefix('user')

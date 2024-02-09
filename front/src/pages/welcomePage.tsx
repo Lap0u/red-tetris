@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '../store/usersSlice';
 import { useNavigate } from 'react-router-dom';
 import MyButton from '../components/MyButton';
+import { socket } from '../App';
 
 const WelcomePage = () => {
   const [username, setUsername] = useState('');
@@ -15,7 +16,7 @@ const WelcomePage = () => {
   };
 
   const handleButtonClick = async () => {
-    const user = await createUser(username);
+    const user = await createUser(username, socket.id);
     dispatch(setUser(user));
     navigate('/lobby');
   };

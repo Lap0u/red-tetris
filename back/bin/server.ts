@@ -12,6 +12,7 @@
 import 'reflect-metadata'
 import { Ignitor, prettyPrintError } from '@adonisjs/core'
 import { Server } from 'socket.io'
+import { handleGameStart, handleRoomJoin, handleRoomLeave } from '#controllers/sockets_controller'
 
 export const io = new Server({
   cors: {
@@ -65,6 +66,33 @@ const testGrid2 = [
 ]
 
 io.listen(3334)
+io.on('connection', (socket) => {
+  let userId: string | null = null
+
+  socket.on('registerUser', (data) => {
+    userId = data.userId
+    // Here you can associate the userId with the socket.id
+    // For example, using a Map or an object to keep track
+  })
+
+  socket.on('disconnect', () => {
+    // Now you can use the userId that was associated with this socket
+    if (userId) {
+      console.log(`User ${userId} disconnected`)
+      handleRoomLeave(userId) // Adjust handleRoomLeave to use userId
+    } else {
+      console.log('Unknown user disconnected')
+    }
+  })
+  socket.on('joinRoom', (data) => {
+    userId = data.userId
+    handleRoomJoin(socket, data.room, data.userId)
+  })
+  socket.on('askGameStart', (data) => {
+    handleGameStart(socket, data)
+  })
+})
+
 /**
  * URL to the application root. AdonisJS need it to resolve
  * paths to file and directories for scaffolding commands

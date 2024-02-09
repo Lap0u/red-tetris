@@ -11,7 +11,7 @@ const Lobby = () => {
   if (user === null) return null;
   const handleCreateGame = async () => {
     const gameId = await createGame(user?.id);
-    navigate(`/${gameId}[${user?.id}]`);
+    navigate(`/pregame/${gameId}/${user?.username}`);
   };
   return (
     <div className="text-red-500 text-4xl flex justify-center items-center gap-x-48 h-screen">

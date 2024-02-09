@@ -18,9 +18,10 @@ export default class User extends BaseModel {
   @hasMany(() => Game)
   declare ownedGames: HasMany<typeof Game>
 
-  socket: Socket | null
+  @column()
+  declare socket_id: string
+
   constructor() {
     super()
-    this.socket = null
   }
 }

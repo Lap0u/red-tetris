@@ -1,18 +1,43 @@
+import { useEffect, useState } from 'react';
 import MyButton from './MyButton';
+import getAvailableGames from '../utils/getAvailableGames';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { RootState } from '../store/store';
 
 const CurrentGamesList = () => {
-  //mock data
-  const games = [
-    { id: 1, name: 'Game 1' },
-    { id: 2, name: 'Game 2' },
-    { id: 3, name: 'Game 3' },
-  ];
+  const [games, setGames] = useState([]);
+  useEffect(() => {
+    const getGames = async () => {
+      const data = await getAvailableGames();
+      setGames(data);
+    };
+    getGames();
+  }, []);
+  const user = useSelector((state: RootState) => state.users.user);
+  const navigate = useNavigate();
+  if (user === null) return null;
+  const joinGame = (gameId: number) => {
+    navigate(`/pregame/${gameId}/${user?.username}`);
+  };
   return (
-    <div className="flex flex-col gap-y-8">
-      {games.map((game) => (
-        <MyButton key={game.id} text={`Join ${game.name}`} onClick={() => {}} />
-      ))}
-    </div>
+    <>
+      {games.length === 0 ? (
+        <div>No games available currently</div>
+      ) : (
+        <div className="flex flex-col gap-y-8">
+          {games.map((game, id) => (
+            <MyButton
+              key={id}
+              text={`Join ${id}`}
+              onClick={() => {
+                joinGame(game.id);
+              }}
+            />
+          ))}
+        </div>
+      )}
+    </>
   );
 };
 

@@ -6,6 +6,7 @@ import { RootState } from './store/store';
 import ProtectedRoute from './components/ProtectedRoute';
 import Lobby from './pages/lobbyPage';
 import GamePage from './pages/gamePage';
+import PregamePage from './pages/pregamePage';
 
 export const socket = io('http://localhost:3334');
 const App = () => {
@@ -14,7 +15,15 @@ const App = () => {
     <BrowserRouter>
       <Routes>
         <Route
-          path="/:gameUrl"
+          path="pregame/:gameId/:username"
+          element={
+            <ProtectedRoute user={user}>
+              <PregamePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="game/:gameUrl/:username"
           element={
             <ProtectedRoute user={user}>
               <GamePage />

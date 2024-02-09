@@ -12,4 +12,15 @@ export default class GamesController {
     user.related('games').save(game)
     return response.json(game)
   }
+
+  async get({ params, response }: HttpContext) {
+    const { gameId } = params
+    const game = await Game.findOrFail(gameId)
+    return response.json(game)
+  }
+
+  async getAvailable({ response }: HttpContext) {
+    const games = await Game.query().where('status', 'waiting')
+    return response.json(games)
+  }
 }
