@@ -1,8 +1,9 @@
 import { Navigate } from 'react-router-dom';
+import { User } from '../dto/User';
 
 type ProtectedRouteProps = {
-  user: any;
-  children: any;
+  user: User | null;
+  children: React.ReactNode;
 };
 
 const ProtectedRoute = ({ user, children }: ProtectedRouteProps) => {
