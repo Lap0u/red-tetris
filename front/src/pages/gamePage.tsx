@@ -1,16 +1,31 @@
-import createGame from '../utils/createGame';
-import MyButton from '../components/MyButton';
-import CurrentGamesList from '../components/CurrentGamesList';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store/store';
+import GameGrid from '../components/GameGrid';
 
 const GamePage = () => {
-  const user = useSelector((state: RootState) => state.users.user);
-  if (user === null) return null;
+  const grid = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  ];
   return (
-    <div className="text-red-500 text-4xl flex justify-center items-center gap-x-48 h-screen">
-      <MyButton onClick={() => createGame(user?.id)} text="Create Game" />
-      <CurrentGamesList />
+    <div>
+      <GameGrid grid={grid} />
     </div>
   );
 };

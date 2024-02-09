@@ -1,6 +1,7 @@
 import MyButton from './MyButton';
 
 const CurrentGamesList = () => {
+  //mock data
   const games = [
     { id: 1, name: 'Game 1' },
     { id: 2, name: 'Game 2' },

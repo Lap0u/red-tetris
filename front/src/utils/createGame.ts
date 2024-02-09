@@ -8,9 +8,9 @@ const createGame = (id: number) => {
       body: JSON.stringify({ userId: id }),
     });
     const data = await res.json();
-    console.log(data);
+    return data.id;
   };
-  serverStartGame();
+  return serverStartGame();
 };
 
 export default createGame;
