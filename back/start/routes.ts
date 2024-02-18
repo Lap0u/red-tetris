@@ -28,6 +28,7 @@ router
 router
   .group(() => {
     router.post('/create', [UsersController, 'create'])
+    router.get('/:id', [UsersController, 'get'])
     router.post('/remove', [UsersController, 'remove'])
   })
   .prefix('user')

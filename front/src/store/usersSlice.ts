@@ -1,17 +1,8 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { User } from '../dto/User';
-import Cookies from 'js-cookie';
 
-const userCookie = Cookies.get('userId');
-let user = null;
-if (userCookie) {
-  user = getUser(userCookie);
-  if (!user) {
-    Cookies.remove('userId');
-  }
-}
 const initialState: { user: User | null } = {
-  user: user,
+  user: null,
 };
 
 // Step 3: Define the slice

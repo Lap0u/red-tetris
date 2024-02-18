@@ -29,7 +29,7 @@ services:
       - '3334:3334'
     volumes:
       - ./back:/app
-      - /back/node_modules
+      - /app/node_modules
     networks:
       - main
 

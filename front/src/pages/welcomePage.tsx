@@ -4,9 +4,11 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '../store/usersSlice';
 import { useNavigate } from 'react-router-dom';
 import MyButton from '../components/MyButton';
+import Cookies from 'js-cookie';
+import { User } from '../dto/User';
 import { socket } from '../App';
 
-const WelcomePage = () => {
+const WelcomePage = ({ user }: { user: User | null }) => {
   const [username, setUsername] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -18,9 +20,11 @@ const WelcomePage = () => {
   const handleButtonClick = async () => {
     const user = await createUser(username, socket.id);
     dispatch(setUser(user));
+    Cookies.set('userId', user.id);
     navigate('/lobby');
   };
 
+  if (user !== null) navigate('/lobby');
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <img

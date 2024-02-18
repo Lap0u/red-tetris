@@ -26,4 +26,11 @@ export default class UsersController {
     await user.save()
     return response.json(user)
   }
+
+  async get({ response, params }: HttpContext) {
+    const { id } = params
+    console.log('first', id)
+    const user = await User.find(id)
+    return response.json(user)
+  }
 }
