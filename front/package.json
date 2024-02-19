@@ -8,7 +8,7 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "test": "vitest run --coverage --coverage.exclude='**/*js'"
+    "test": "vitest run --coverage --coverage.exclude='**/*js' --coverage.exclude='**/*.tsx' --coverage.exclude='**/*.d.ts' --coverage.exclude='**/dto/**'"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.1.0",

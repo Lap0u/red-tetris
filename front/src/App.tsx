@@ -1,4 +1,4 @@
-import socketIO from 'socket.io-client';
+import { io } from 'socket.io-client';
 import WelcomePage from './pages/welcomePage';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -7,7 +7,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Lobby from './pages/lobbyPage';
 import GamePage from './pages/gamePage';
 
-export const socket = socketIO.connect('http://localhost:3334');
+export const socket = io('http://localhost:3334');
 const App = () => {
   const user = useSelector((state: RootState) => state.users.user);
   return (
