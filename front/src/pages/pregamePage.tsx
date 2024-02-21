@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import getGame from '../utils/getGame';
+import getGame from '../fetch/getGame';
 import MyButton from '../components/MyButton';
 import PlayersList from '../components/PlayersList';
 import { User } from '../dto/User';

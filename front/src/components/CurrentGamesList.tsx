@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import MyButton from './MyButton';
-import getAvailableGames from '../utils/getAvailableGames';
+import getAvailableGames from '../fetch/getAvailableGames';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { RootState } from '../store/store';

@@ -1,4 +1,4 @@
-import createGame from '../utils/createGame';
+import createGame from '../fetch/createGame';
 import MyButton from '../components/MyButton';
 import CurrentGamesList from '../components/CurrentGamesList';
 import { useSelector } from 'react-redux';
