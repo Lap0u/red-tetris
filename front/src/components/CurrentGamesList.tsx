@@ -16,7 +16,6 @@ const CurrentGamesList = () => {
   }, []);
   const user = useSelector((state: RootState) => state.users.user);
   const navigate = useNavigate();
-  if (user === null) return null;
   const joinGame = (gameId: number) => {
     navigate(`/pregame/${gameId}/${user?.username}`);
   };

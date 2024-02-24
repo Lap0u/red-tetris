@@ -4,12 +4,9 @@ import getGame from '../fetch/getGame';
 import MyButton from '../components/MyButton';
 import PlayersList from '../components/PlayersList';
 import { User } from '../dto/User';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store/store';
 import { socket } from '../App';
 
-const PregamePage = () => {
-  const user = useSelector((state: RootState) => state.users.user);
+const PregamePage = ({ user }: { user: User }) => {
   const { gameId } = useParams();
   const navigate = useNavigate();
   const [players, setPlayers] = useState<User[]>([]);
@@ -19,15 +16,9 @@ const PregamePage = () => {
         navigate('/lobby');
         return;
       }
-      try {
-        const game = await getGame(gameId);
-        if (!game) {
-          navigate('/lobby');
-        }
-        return game;
-      } catch (error) {
-        console.error(error);
-        navigate('/');
+      const game = await getGame(gameId);
+      if (!game) {
+        navigate('/lobby');
       }
     };
     checkGameId();

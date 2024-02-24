@@ -1,14 +1,12 @@
 import createGame from '../fetch/createGame';
 import MyButton from '../components/MyButton';
 import CurrentGamesList from '../components/CurrentGamesList';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store/store';
 import { useNavigate } from 'react-router-dom';
+import { User } from '../dto/User';
 
-const Lobby = () => {
-  const user = useSelector((state: RootState) => state.users.user);
+const Lobby = ({ user }: { user: User }) => {
   const navigate = useNavigate();
-  if (user === null) return null;
+  // if (user === null) return null;
   const handleCreateGame = async () => {
     const gameId = await createGame(user?.id);
     navigate(`/pregame/${gameId}/${user?.username}`);

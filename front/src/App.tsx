@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { setUser } from './store/usersSlice';
 import getUser from './fetch/getUser';
 import PregamePage from './pages/pregamePage';
+import { User } from './dto/User';
 
 export const socket = io('http://localhost:3334');
 const App = () => {
@@ -45,7 +46,7 @@ const App = () => {
           path="pregame/:gameId/:username"
           element={
             <ProtectedRoute isAuthLoading={isAuthLoading} user={user}>
-              <PregamePage />
+              <PregamePage user={user as User} />
             </ProtectedRoute>
           }
         />
@@ -62,7 +63,7 @@ const App = () => {
           path="/lobby"
           element={
             <ProtectedRoute isAuthLoading={isAuthLoading} user={user}>
-              <Lobby />
+              <Lobby user={user as User} />
             </ProtectedRoute>
           }
         />
