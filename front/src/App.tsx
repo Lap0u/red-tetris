@@ -9,7 +9,7 @@ import GamePage from './pages/gamePage';
 import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 import { setUser } from './store/usersSlice';
-import getUser from './utils/getUser';
+import getUser from './fetch/getUser';
 import PregamePage from './pages/pregamePage';
 
 export const socket = io('http://localhost:3334');
@@ -19,6 +19,7 @@ const App = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     const checkUser = async () => {
+      setIsAuthLoading(true);
       const userCookie = Cookies.get('userId');
       console.log('userCookie', userCookie);
       if (userCookie) {
@@ -30,8 +31,8 @@ const App = () => {
           return;
         }
         dispatch(setUser(user));
-        setIsAuthLoading(false);
       }
+      setIsAuthLoading(false);
     };
     checkUser();
   }, [dispatch]);
@@ -43,7 +44,7 @@ const App = () => {
         <Route
           path="pregame/:gameId/:username"
           element={
-            <ProtectedRoute user={user}>
+            <ProtectedRoute isAuthLoading={isAuthLoading} user={user}>
               <PregamePage />
             </ProtectedRoute>
           }

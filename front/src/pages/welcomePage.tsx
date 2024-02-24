@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import createUser from '../fetch/createUser';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../store/usersSlice';
@@ -13,6 +13,13 @@ const WelcomePage = ({ user }: { user: User | null }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Redirect to the lobby if the user exists
+    if (user !== null) {
+      navigate('/lobby');
+    }
+  }, [user, navigate]);
+
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
   };
@@ -24,7 +31,6 @@ const WelcomePage = ({ user }: { user: User | null }) => {
     navigate('/lobby');
   };
 
-  if (user !== null) navigate('/lobby');
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <img
