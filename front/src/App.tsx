@@ -51,10 +51,10 @@ const App = () => {
           }
         />
         <Route
-          path="game/:gameUrl/:username"
+          path="game/:gameId/:username"
           element={
             <ProtectedRoute isAuthLoading={isAuthLoading} user={user}>
-              <GamePage />
+              <GamePage user={user as User} />
             </ProtectedRoute>
           }
         />

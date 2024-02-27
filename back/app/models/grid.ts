@@ -1,5 +1,6 @@
 import Piece from './piece.js'
 import env from '#start/env'
+import { Socket } from 'socket.io'
 
 export default class Grid {
   width: number
@@ -8,7 +9,7 @@ export default class Grid {
   piecesList: Piece[]
   gameStatus: 'waiting' | 'pending' | 'ended'
   currentPiece: Piece | undefined
-  constructor(piecesList: Piece[]) {
+  constructor() {
     this.width = env.get('GRID_WIDTH')
     this.gameStatus = 'waiting'
     this.height = env.get('GRID_HEIGHT')
@@ -20,8 +21,11 @@ export default class Grid {
         this.grid[i][j] = 0
       }
     }
-    this.piecesList = piecesList
-    for (let piece of piecesList) {
+    this.piecesList = []
+  }
+  setPiecesList(piecesList: Piece[]) {
+    this.piecesList = [...piecesList]
+    for (let piece of this.piecesList) {
       piece.addGrid(this)
     }
   }
@@ -50,7 +54,7 @@ export default class Grid {
     for (let i = 0; i < piece.shape.length; i++) {
       for (let j = 0; j < piece.shape[i].length; j++) {
         if (piece.shape[i][j] === 1) {
-          this.grid[piece.y + i][piece.x + j] = 1
+          this.grid[piece.y + i][piece.x + j] = 8 // We use 8 to represent a landed piece
         }
       }
     }
@@ -58,7 +62,30 @@ export default class Grid {
   toJSON() {
     return this.grid
   }
-  gameLoop() {
+  getCompleteGrid() {
+    // Create a deep copy of the grid to avoid modifying the original grid
+    let completeGrid = JSON.parse(JSON.stringify(this.grid))
+
+    if (this.currentPiece) {
+      // Get the current piece's position and shape
+      const { x, y, shape } = this.currentPiece
+
+      // Overlay the current piece onto the grid copy
+      for (let i = 0; i < shape.length; i++) {
+        for (let j = 0; j < shape[i].length; j++) {
+          if (shape[i][j] === 1) {
+            // Check if the position is within grid bounds to avoid errors
+            if (y + i >= 0 && y + i < this.height && x + j >= 0 && x + j < this.width) {
+              completeGrid[y + i][x + j] = this.currentPiece.id
+            }
+          }
+        }
+      }
+    }
+
+    return completeGrid
+  }
+  gameLoop(socket: Socket, roomId: string, playerId: number, username: string) {
     this.gameStatus = 'pending'
     const id = setInterval(() => {
       if (this.gameStatus === 'ended') clearInterval(id)
@@ -90,6 +117,9 @@ export default class Grid {
         this.savePieceToGrid(this.currentPiece)
         this.currentPiece = undefined
       }
-    }, 100)
+      const completeGrid = this.getCompleteGrid()
+      socket.to(roomId).emit('myNewGrid', { completeGrid, playerId, username })
+      socket.emit('myNewGrid', { completeGrid, playerId, username })
+    }, 200)
   }
 }

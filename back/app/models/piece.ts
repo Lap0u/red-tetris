@@ -1,7 +1,15 @@
 import env from '#start/env'
 import Grid from './grid.js'
 
-type PieceType = 'line' | 'square' | 'l' | 'reverse_l' | 't' | 'z' | 'reverse_z'
+export type PieceType = 'line' | 'square' | 'l' | 'reverse_l' | 't' | 'z' | 'reverse_z'
+export type keyStroke =
+  | 'ArrowUp'
+  | 'ArrowDown'
+  | 'ArrowLeft'
+  | 'ArrowRight'
+  | 'keyA'
+  | 'keyD'
+  | 'Space'
 type MoveType = 'left' | 'right' | 'down' | 'fall'
 type RotateType = 'left' | 'right'
 
@@ -75,6 +83,32 @@ export default class Piece {
         ]
     }
   }
+  movePiece(key: keyStroke) {
+    console.log('movePiece', key)
+    switch (key) {
+      case 'ArrowLeft':
+        this.move('left')
+        break
+      case 'keyA':
+        this.rotate('left')
+        break
+      case 'ArrowRight':
+        this.move('right')
+        break
+      case 'keyD':
+        this.rotate('right')
+        break
+      case 'ArrowDown':
+        this.move('down')
+        break
+      case 'Space':
+        this.move('fall')
+        break
+      case 'ArrowUp':
+        this.move('fall')
+        break
+    }
+  }
   move(move: MoveType) {
     switch (move) {
       case 'left':
@@ -107,11 +141,11 @@ export default class Piece {
     if (!this.grid) return false
     for (let i = 0; i < this.shape.length; i++) {
       for (let j = 0; j < this.shape[0].length; j++) {
-        if (this.shape[i][j] === 1) {
+        if (this.shape[i][j] !== 0) {
           if (this.x + j < 0 || this.x + j >= this.GRID_WIDTH || this.y + i >= this.GRID_HEIGHT) {
             return false
           }
-          if (this.grid.grid[this.y + i][this.x + j] === 1) {
+          if (this.grid.grid[this.y + i][this.x + j] !== 0) {
             return false
           }
         }
@@ -156,7 +190,7 @@ export default class Piece {
   #willCollide(newMatrix: number[][]) {
     for (let i = 0; i < newMatrix.length; i++) {
       for (let j = 0; j < newMatrix.length; j++) {
-        if (newMatrix[i][j] === 1) {
+        if (newMatrix[i][j] !== 0) {
           if (this.x + j < 0 || this.x + j >= this.GRID_WIDTH || this.y + i >= this.GRID_HEIGHT) {
             return true
           }

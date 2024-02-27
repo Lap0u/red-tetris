@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { BaseModel, beforeCreate, column, manyToMany } from '@adonisjs/lucid/orm'
 import User from './user.js'
 import type { ManyToMany } from '@adonisjs/lucid/types/relations'
+import Piece, { PieceType } from './piece.js'
 
 export default class Game extends BaseModel {
   static readonly selfAssignPrimaryKey = true
@@ -22,4 +23,19 @@ export default class Game extends BaseModel {
 
   @column()
   declare userId: number
+
+  piecesList: Piece[]
+  constructor() {
+    super()
+    this.piecesList = []
+  }
+  generatePiecesList() {
+    const pieceTypes: PieceType[] = ['line', 'square', 'l', 'reverse_l', 't', 'z', 'reverse_z'] // Array of possible piece types
+    for (let i = 0; i < 20; i++) {
+      const randomTypeIndex = Math.floor(Math.random() * pieceTypes.length) // Generate a random index
+      const randomType = pieceTypes[randomTypeIndex] // Use the random index to select a piece type
+      const piece = new Piece(randomTypeIndex + 1, 5, 0, randomType) // Create a piece with the random type
+      this.piecesList.push(piece) // Add the piece to the list
+    }
+  }
 }

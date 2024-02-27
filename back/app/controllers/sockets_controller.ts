@@ -1,6 +1,7 @@
 import Game from '#models/game'
+import { keyStroke } from '#models/piece'
 import User from '#models/user'
-import { DisconnectReason, Socket } from 'socket.io'
+import { Socket } from 'socket.io'
 
 export const handleRoomJoin = async (socket: Socket, roomId: string, userId: number) => {
   const game = await Game.findOrFail(roomId)
@@ -45,6 +46,22 @@ export const handleGameStart = async (socket: Socket, data: { room: string; user
   await game.save()
   socket.to(data.room).emit('gameStart')
   socket.emit('gameStart')
+  const players = await game.related('users').query()
+  game.generatePiecesList()
+  for (const player of players) {
+    player.grid.setPiecesList(game.piecesList)
+    player.grid.gameLoop(socket, data.room, player.id, player.username)
+  }
+}
+
+export const handleKeyPress = async (data: { room: string; userId: string; key: keyStroke }) => {
+  console.log('keyPress', data)
+  const game = await Game.findOrFail(data.room)
+  console.log('survived game findOrFail', game.id)
+  const user = await User.findOrFail(data.userId)
+  console.log('survived user findOrFail', user.id)
+  console.log('currentPiece', user.grid.currentPiece)
+  user.grid.currentPiece?.movePiece(data.key)
 }
 
 export const handleGetOwners = async (socket: Socket) => {

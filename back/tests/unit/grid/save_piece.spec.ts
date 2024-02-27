@@ -9,7 +9,7 @@ test.group('Grid save piece', () => {
     grid.savePieceToGrid(line)
     assert.deepEqual(grid.grid, [
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+      [8, 8, 8, 8, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -35,8 +35,8 @@ test.group('Grid save piece', () => {
     const square = new Piece(1, 0, 0, 'square')
     grid.savePieceToGrid(square)
     assert.deepEqual(grid.grid, [
-      [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
-      [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+      [0, 8, 8, 0, 0, 0, 0, 0, 0, 0],
+      [0, 8, 8, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -62,8 +62,8 @@ test.group('Grid save piece', () => {
     const l = new Piece(1, 0, 0, 'l')
     grid.savePieceToGrid(l)
     assert.deepEqual(grid.grid, [
-      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+      [8, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [8, 8, 8, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -89,8 +89,8 @@ test.group('Grid save piece', () => {
     const reverse_l = new Piece(1, 0, 0, 'reverse_l')
     grid.savePieceToGrid(reverse_l)
     assert.deepEqual(grid.grid, [
-      [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-      [1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 8, 0, 0, 0, 0, 0, 0, 0],
+      [8, 8, 8, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -116,8 +116,8 @@ test.group('Grid save piece', () => {
     const z = new Piece(1, 0, 0, 'z')
     grid.savePieceToGrid(z)
     assert.deepEqual(grid.grid, [
-      [1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+      [8, 8, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 8, 8, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -143,8 +143,8 @@ test.group('Grid save piece', () => {
     const reverse_z = new Piece(1, 0, 0, 'reverse_z')
     grid.savePieceToGrid(reverse_z)
     assert.deepEqual(grid.grid, [
-      [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
-      [1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 8, 8, 0, 0, 0, 0, 0, 0, 0],
+      [8, 8, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -170,8 +170,8 @@ test.group('Grid save piece', () => {
     const t = new Piece(1, 0, 0, 't')
     grid.savePieceToGrid(t)
     assert.deepEqual(grid.grid, [
-      [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-      [1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+      [0, 8, 0, 0, 0, 0, 0, 0, 0, 0],
+      [8, 8, 8, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

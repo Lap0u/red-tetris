@@ -2,7 +2,7 @@ import Grid from '#models/grid'
 import Piece from '#models/piece'
 import { test } from '@japa/runner'
 
-test.group('Piece move', () => {
+test.group('Basic piece move', () => {
   const grid = new Grid([])
   test('Piece goes down properly', async ({ assert }) => {
     const piece = new Piece(1, 5, 5, 'line')
@@ -88,4 +88,4 @@ test.group('Piece move', () => {
     piece.move('fall')
     assert.equal(piece.y, 3)
   })
-})
+})``
