@@ -10,6 +10,8 @@ const PregamePage = ({ user }: { user: User }) => {
   const { gameId } = useParams();
   const navigate = useNavigate();
   const [players, setPlayers] = useState<User[]>([]);
+  const [notGameOwner, setNotGameOwner] = useState(false);
+
   useEffect(() => {
     const checkGameId = async () => {
       if (!gameId) {
@@ -23,7 +25,7 @@ const PregamePage = ({ user }: { user: User }) => {
     };
     checkGameId();
     socket.on(`gameStart`, () => {
-      navigate(`/game/${gameId}/${user?.username}`);
+      navigate(`/game/${gameId}/${user.username}`);
     });
     socket.on(`playerJoined`, (players) => {
       setPlayers(players);
@@ -32,14 +34,29 @@ const PregamePage = ({ user }: { user: User }) => {
       alert('Room is full');
       navigate('/lobby');
     });
-    socket.emit('joinRoom', { room: gameId, userId: user?.id });
-  }, [gameId, navigate, user?.username, user?.id]);
+    socket.on(`notOwner`, () => {
+      setNotGameOwner(true);
+    });
+    socket.emit('joinRoom', { room: gameId, userId: user.id });
+  }, [gameId, navigate, user.username, user.id]);
   const startGame = () => {
-    socket.emit('askGameStart', { room: gameId, userId: user?.id });
+    socket.emit('askGameStart', { room: gameId, userId: user.id });
   };
   return (
     <div className="w-screen h-screen gap-x-32 flex justify-center items-center">
-      <MyButton onClick={startGame} text="Start Game" />
+      <div className="flex flex-col justify-center items-center
+      h-fit gap-y-4">
+      <MyButton
+            onClick={startGame}
+            text="Start Game"
+            disabled={notGameOwner}
+          />
+      {notGameOwner && (
+        <p className="w-48 text-red-500 text-xs text-center">
+          Wait for the game's owner to launch...
+        </p>
+      )}
+    </div>
       <PlayersList players={players} />
     </div>
   );

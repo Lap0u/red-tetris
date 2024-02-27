@@ -2,7 +2,7 @@ import Game from '#models/game'
 import User from '#models/user'
 import { DisconnectReason, Socket } from 'socket.io'
 
-export const handleRoomJoin = async (socket: Socket, roomId: string, userId: string) => {
+export const handleRoomJoin = async (socket: Socket, roomId: string, userId: number) => {
   const game = await Game.findOrFail(roomId)
   game.status = 'waiting'
   await game.save()
@@ -13,12 +13,15 @@ export const handleRoomJoin = async (socket: Socket, roomId: string, userId: str
     socket.emit('roomFull')
     return
   }
+  if (game.userId !== userId) {
+    socket.emit('notOwner');
+  }
   socket.join(roomId)
   socket.to(roomId).emit('playerJoined', players)
   socket.emit('playerJoined', players)
 }
 
-export const handleRoomLeave = async (userId: string) => {
+export const handleRoomLeave = async (userId: number) => {
   console.log('socket', userId)
   const user = await User.findOrFail(userId)
   const games = await user.related('games').query()
@@ -34,7 +37,7 @@ export const handleRoomLeave = async (userId: string) => {
   }
 }
 
-export const handleGameStart = async (socket: Socket, data: { room: string; userId: string }) => {
+export const handleGameStart = async (socket: Socket, data: { room: string; userId: number }) => {
   const game = await Game.findOrFail(data.room)
   const user = await User.findOrFail(data.userId)
   if (user.id !== game.userId) return // user is not owner of the game`
@@ -42,4 +45,12 @@ export const handleGameStart = async (socket: Socket, data: { room: string; user
   await game.save()
   socket.to(data.room).emit('gameStart')
   socket.emit('gameStart')
+}
+
+export const handleGetOwners = async (socket: Socket) => {
+  const gameOwners = await User.query().has('ownedGames');
+  const ownerIdsNames = gameOwners.map((owner) => {
+    return { id: owner.id, username: owner.username };
+  });
+  socket.emit('getOwners', ownerIdsNames);
 }

@@ -12,7 +12,7 @@
 import 'reflect-metadata'
 import { Ignitor, prettyPrintError } from '@adonisjs/core'
 import { Server } from 'socket.io'
-import { handleGameStart, handleRoomJoin, handleRoomLeave } from '#controllers/sockets_controller'
+import { handleGameStart, handleGetOwners, handleRoomJoin, handleRoomLeave } from '#controllers/sockets_controller'
 
 export const io = new Server({
   cors: {
@@ -67,7 +67,7 @@ const testGrid2 = [
 
 io.listen(3334)
 io.on('connection', (socket) => {
-  let userId: string | null = null
+  let userId: number | null = null
 
   socket.on('registerUser', (data) => {
     userId = data.userId
@@ -91,6 +91,9 @@ io.on('connection', (socket) => {
   socket.on('askGameStart', (data) => {
     handleGameStart(socket, data)
   })
+  socket.on('askGetOwners', () => {
+    handleGetOwners(socket);
+  });
 })
 
 /**

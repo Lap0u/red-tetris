@@ -8,8 +8,8 @@ const Lobby = ({ user }: { user: User }) => {
   const navigate = useNavigate();
   // if (user === null) return null;
   const handleCreateGame = async () => {
-    const gameId = await createGame(user?.id);
-    navigate(`/pregame/${gameId}/${user?.username}`);
+    const gameId = await createGame(user.id);
+    navigate(`/pregame/${gameId}/${user.username}`);
   };
   return (
     <div className="text-red-500 text-4xl flex justify-center items-center gap-x-48 h-screen">
