@@ -5,6 +5,7 @@ import PlayersList from '../components/PlayersList';
 import { User } from '../dto/User';
 import { socket } from '../App';
 import useCheckGameId from '../hooks/useCheckGameId';
+import createGrids from '../fetch/createGrids';
 
 const PregamePage = ({ user }: { user: User }) => {
   const { gameId } = useParams();
@@ -29,8 +30,10 @@ const PregamePage = ({ user }: { user: User }) => {
     });
     socket.emit('joinRoom', { room: gameId, userId: user.id });
   }, [gameId, navigate, user.username, user.id]);
-  const startGame = () => {
-    socket.emit('askGameStart', { room: gameId, userId: user.id });
+  const startGame = async () => {
+    await createGrids(gameId).then(() => {
+      socket.emit('askGameStart', { room: gameId, userId: user.id })
+    });
   };
   return (
     <div className="w-screen h-screen gap-x-32 flex justify-center items-center">

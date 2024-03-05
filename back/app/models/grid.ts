@@ -1,41 +1,65 @@
-import Piece from './piece.js'
+import { BaseModel, beforeCreate, column } from '@adonisjs/lucid/orm'
+import PieceService from '#services/piece_service'
+import { v4 as uuidv4 } from 'uuid'
 import env from '#start/env'
 import { Socket } from 'socket.io'
 
-export default class Grid {
+export default class Grid extends BaseModel {
+  @column({ isPrimary: true })
+  declare id: string
+
+  @beforeCreate()
+  static assignUuid(grid: Grid) {
+    grid.id = uuidv4()
+  }
+
+  @column({
+    prepare: (value: PieceService[]) => JSON.stringify(value),
+    consume: (value: string) => JSON.parse(JSON.stringify(value))
+  })
+  declare piecesList: PieceService[]
+
+  @column()
+  declare userId: number
+
   width: number
   height: number
-  grid: number[][]
-  piecesList: Piece[]
   gameStatus: 'waiting' | 'pending' | 'ended'
-  currentPiece: Piece | undefined
+  grid: number[][]
+  currentPiece: PieceService | undefined
+
   constructor() {
+    super()
     this.width = env.get('GRID_WIDTH')
-    this.gameStatus = 'waiting'
     this.height = env.get('GRID_HEIGHT')
+    this.gameStatus = 'waiting'
     this.grid = Array.from(Array(this.height), () => new Array(this.width).fill(0))
-    this.currentPiece = undefined
     for (let i = 0; i < this.width; i++) {
       this.grid[i] = []
       for (let j = 0; j < this.width; j++) {
         this.grid[i][j] = 0
       }
     }
-    this.piecesList = []
+    this.currentPiece = undefined
   }
-  setPiecesList(piecesList: Piece[]) {
+
+  public checkIfNextCellMoveIsValid(y: number, x: number, i: number, j: number) {
+    return this.grid[y + i][x + j] !== 0
+  }
+  public async setPiecesList(piecesList: PieceService[]) {
     this.piecesList = [...piecesList]
     for (let piece of this.piecesList) {
       piece.addGrid(this)
     }
+    await this.save()
   }
-  isFree(x: number, y: number) {
+  public isFree(x: number, y: number) {
     return this.grid[y][x] === 0
   }
-  isFull() {
+  public isFull() {
     return this.grid[0].every((cell) => cell !== 0)
   }
-  checkLines() {
+  public checkLines() {
     const lines = []
     for (let i = 0; i < this.height; i++) {
       if (this.grid[i].every((cell) => cell !== 0)) {
@@ -44,13 +68,13 @@ export default class Grid {
     }
     return lines
   }
-  removeLines(lines: number[]) {
+  public removeLines(lines: number[]) {
     for (let line of lines) {
       this.grid.splice(line, 1)
       this.grid.unshift(new Array(this.width).fill(0))
     }
   }
-  savePieceToGrid(piece: Piece) {
+  public savePieceToGrid(piece: PieceService) {
     for (let i = 0; i < piece.shape.length; i++) {
       for (let j = 0; j < piece.shape[i].length; j++) {
         if (piece.shape[i][j] === 1) {
@@ -59,10 +83,10 @@ export default class Grid {
       }
     }
   }
-  toJSON() {
+  public toJSON() {
     return this.grid
   }
-  getCompleteGrid() {
+  public getCompleteGrid() {
     // Create a deep copy of the grid to avoid modifying the original grid
     let completeGrid = JSON.parse(JSON.stringify(this.grid))
 
@@ -82,16 +106,24 @@ export default class Grid {
         }
       }
     }
-
     return completeGrid
   }
-  gameLoop(socket: Socket, roomId: string, playerId: number, username: string) {
+
+  private allocateCurrentPiece() {
+    const nextPiece = this.piecesList.shift()
+    if (nextPiece === undefined) return undefined
+    const currentPiece =  new PieceService(nextPiece.id, nextPiece.x, nextPiece.y, nextPiece.type)
+    currentPiece.addGrid(this)
+    return currentPiece
+  }
+
+  public gameLoop(socket: Socket, roomId: string, playerId: number, username: string) {
     this.gameStatus = 'pending'
     const id = setInterval(() => {
       if (this.gameStatus === 'ended') clearInterval(id)
       // If there is no current piece, we take the next one from the list and check if lines should be removed
       if (this.currentPiece === undefined) {
-        this.currentPiece = this.piecesList.shift()
+        this.currentPiece = this.allocateCurrentPiece()
         const lines = this.checkLines()
         if (lines.length > 0) {
           this.removeLines(lines)
@@ -109,8 +141,11 @@ export default class Grid {
         clearInterval(id)
         return
       }
+      console.log('this.currentPiece ==>', this.currentPiece.type)
       // We move the piece down and check if it has landed
-      if (this.currentPiece.move('down') === -1) this.currentPiece.status = 'landed'
+      if (this.currentPiece.move('down') === -1) {
+        this.currentPiece.status = 'landed'
+      }
 
       // If the piece has landed, we add it to the grid
       if (this.currentPiece.status === 'landed') {

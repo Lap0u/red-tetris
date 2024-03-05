@@ -1,5 +1,6 @@
+import Grid from '#models/grid'
 import env from '#start/env'
-import Grid from './grid.js'
+
 
 export type PieceType = 'line' | 'square' | 'l' | 'reverse_l' | 't' | 'z' | 'reverse_z'
 export type keyStroke =
@@ -13,7 +14,7 @@ export type keyStroke =
 type MoveType = 'left' | 'right' | 'down' | 'fall'
 type RotateType = 'left' | 'right'
 
-export default class Piece {
+export default class PieceService {
   id: number
   x: number
   y: number
@@ -22,7 +23,7 @@ export default class Piece {
   status: 'falling' | 'landed' | 'undestroyable'
   GRID_WIDTH: number
   GRID_HEIGHT: number
-  grid?: Grid
+  grid: Grid = new Grid()
   constructor(id: number, x: number, y: number, type: PieceType) {
     this.id = id
     this.x = x
@@ -145,7 +146,7 @@ export default class Piece {
           if (this.x + j < 0 || this.x + j >= this.GRID_WIDTH || this.y + i >= this.GRID_HEIGHT) {
             return false
           }
-          if (this.grid.grid[this.y + i][this.x + j] !== 0) {
+          if (this.grid.checkIfNextCellMoveIsValid(this.y, this.x, i, j)) {
             return false
           }
         }

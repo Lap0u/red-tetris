@@ -1,6 +1,7 @@
 import Game from '#models/game'
-import { keyStroke } from '#models/piece'
+import Grid from '#models/grid'
 import User from '#models/user'
+import { keyStroke } from '#services/piece_service'
 import { Socket } from 'socket.io'
 
 export const handleRoomJoin = async (socket: Socket, roomId: string, userId: number) => {
@@ -39,18 +40,38 @@ export const handleRoomLeave = async (userId: number) => {
 }
 
 export const handleGameStart = async (socket: Socket, data: { room: string; userId: number }) => {
-  const game = await Game.findOrFail(data.room)
-  const user = await User.findOrFail(data.userId)
-  if (user.id !== game.userId) return // user is not owner of the game`
+  const { room, userId } = data
+  const game = await Game.findOrFail(room)
+  const user = await User.findOrFail(userId)
+  // user is not owner of the game
+  if (user.id !== game.userId) return ''
   game.status = 'playing'
-  await game.save()
-  socket.to(data.room).emit('gameStart')
-  socket.emit('gameStart')
+
+  // game.save in promise to avoid race conditions with socket.to/emit gameStart
+  const promise = new Promise(async (resolve) => {
+    await game.save()
+    resolve('game saved')
+  })
+  promise.then(() => {
+    socket.to(data.room).emit('gameStart')
+    socket.emit('gameStart')
+  })
+
   const players = await game.related('users').query()
-  game.generatePiecesList()
+
+  const grids = []
   for (const player of players) {
-    player.grid.setPiecesList(game.piecesList)
-    player.grid.gameLoop(socket, data.room, player.id, player.username)
+    const curGrid = await Grid.findByOrFail('userId', player.id)
+    grids.push(curGrid)
+  }
+
+  for (const player of players) {
+    const grid = grids.find((grid) => grid.userId === player.id)
+    if (!grid) {
+      console.error('No grid find for player: ', player.id);
+      return
+    }
+    grid.gameLoop(socket, data.room, player.id, player.username);
   }
 }
 
