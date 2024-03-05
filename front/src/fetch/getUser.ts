@@ -9,7 +9,7 @@ const getUser = async (id: string) => {
       throw new Error('Failed to get a user');
     }
     const data = await res.json();
-    return data.id;
+    return data;
   } catch (error) {
     return null;
   }

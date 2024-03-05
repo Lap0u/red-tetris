@@ -5,6 +5,10 @@ export default class UsersController {
   async create({ request, response }: HttpContext) {
     const { username, socketId } = request.all()
     console.log('create', username, socketId)
+    const userExists = await User.findBy('username', username)
+    if (userExists) {
+      return response.status(409).json({ message: 'Username already exists' })
+    }
     const user = await User.create({ username: username, history: [], socket_id: socketId })
     return response.json(user)
   }
