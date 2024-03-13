@@ -1,14 +1,11 @@
+import axiosInstance from "../axios/axios";
+
 const getUser = async (id: string) => {
   try {
-    const res = await fetch(`http://localhost:3333/user/${id}`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    if (!res.ok) {
+    const { status, data } = await axiosInstance.get(`user/${id}`);
+    if (status !== 200) {
       throw new Error('Failed to get a user');
     }
-    const data = await res.json();
     return data;
   } catch (error) {
     return null;

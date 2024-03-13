@@ -1,47 +1,42 @@
 import { describe, expect, it, vi } from 'vitest';
 import createGame from '../../fetch/createGame';
 
+const mockedAxios = vi.hoisted(() => ({
+    post: vi.fn(),
+}));
+
+vi.mock('../../axios/axios', () => ({
+  default: mockedAxios,
+}));
+
 describe('createGame', () => {
     const id = 456;
-    const fetchUrl = 'http://localhost:3333/game/new'
-    const fetchOptions = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userId: id }),
-    };
+    const fetchUrl = 'game/new'
 
     it('should call the server API and return the game ID', async () => {
-        // Mock the fetch function
-        const mockFetch = vi.fn().mockResolvedValue({
-            ok: true,
-            json: vi.fn().mockResolvedValue({ id: 123 }),
+        // Mock the axios
+        mockedAxios.post.mockResolvedValue({
+            status: 200,
+            data: { id: id },
         });
-        global.fetch = mockFetch;
 
-        // Call the createGame function
         const gameId = await createGame(id);
 
-        // Verify the fetch function was called with the correct arguments
-        expect(mockFetch).toHaveBeenCalledWith(fetchUrl, fetchOptions);
-
-        // Verify the returned game ID
-        expect(gameId).toBe(123);
+        expect(mockedAxios.post).toHaveBeenCalledWith(`${fetchUrl}`, { userId: id });
+        expect(gameId).toStrictEqual(id);
     });
-
-    it('should throw an error for server API failure', async () => {
+    it('should throw an error due to wrong status code', async () => {
         // Mock the fetch function to simulate a server error
-        const mockFetch = vi.fn().mockResolvedValue({
-            ok: false,
-        });
-        global.fetch = mockFetch;
+        mockedAxios.post.mockResolvedValue({
+          status: 500,
+          data: { id: id },
+      });
 
         // Call the createGame function
         const gameId = await createGame(id);
 
         // Verify the fetch function was called with the correct arguments
-        expect(mockFetch).toHaveBeenCalledWith(fetchUrl, fetchOptions);
+        expect(mockedAxios.post).toHaveBeenCalledWith(`${fetchUrl}`, { userId: id });
 
         // Verify the returned game ID is null
         expect(gameId).toBeNull();
