@@ -11,6 +11,9 @@
     "test": "vitest run --coverage --coverage.exclude='**/*js' --coverage.exclude='**/main.tsx' --coverage.exclude='**/**env*' --coverage.exclude='**/dto/**'"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.15.14",
     "@reduxjs/toolkit": "^2.1.0",
     "@types/js-cookie": "^3.0.6",
     "@types/socket.io": "^3.0.2",

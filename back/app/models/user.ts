@@ -24,4 +24,6 @@ export default class User extends BaseModel {
   @column()
   declare socket_id: string
 
+  @column()
+  declare isDead: boolean
 }
