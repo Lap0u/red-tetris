@@ -16,7 +16,7 @@ export const handleRoomJoin = async (socket: Socket, roomId: string, userId: num
     return
   }
   if (game.userId !== userId) {
-    socket.emit('notOwner');
+    socket.emit('notOwner')
   }
   socket.join(roomId)
   socket.to(roomId).emit('playerJoined', players)
@@ -66,12 +66,14 @@ export const handleGameStart = async (socket: Socket, data: { room: string; user
   }
 
   for (const player of players) {
+    player.isDead = false
+    await player.save()
     const grid = grids.find((grid) => grid.userId === player.id)
     if (!grid) {
-      console.error('No grid find for player: ', player.id);
+      console.error('No grid find for player: ', player.id)
       return
     }
-    grid.gameLoop(socket, data.room, player.id, player.username);
+    grid.gameLoop(socket, data.room, player.id, player.username)
   }
 }
 
@@ -86,9 +88,36 @@ export const handleKeyPress = async (data: { room: string; userId: string; key: 
 }
 
 export const handleGetOwners = async (socket: Socket) => {
-  const gameOwners = await User.query().has('ownedGames');
+  const gameOwners = await User.query().has('ownedGames')
   const ownerIdsNames = gameOwners.map((owner) => {
-    return { id: owner.id, username: owner.username };
-  });
-  socket.emit('getOwners', ownerIdsNames);
+    return { id: owner.id, username: owner.username }
+  })
+  socket.emit('getOwners', ownerIdsNames)
+}
+
+export const handleEndGame = async (socket: Socket, roomId: string, userId: number) => {
+  const game = await Game.findOrFail(roomId)
+  const players = await game.related('users').query()
+  const currPlayer = players.find((player) => player.id === userId)
+  if (!currPlayer) return
+  currPlayer.isDead = true
+  await currPlayer.save()
+  const playersLeft = players.filter((player) => player.isDead === false)
+  if (playersLeft.length === 1 || players.length === 1) {
+    if (players.length === 1) {
+      socket.emit('gameEnd', players[0].id)
+    }
+    else {
+      socket.to(roomId).emit('gameEnd', playersLeft[0].id)
+      socket.emit('gameEnd', playersLeft[0].id)
+      const winnerGrid = await Grid.findByOrFail('userId', playersLeft[0].id)
+      winnerGrid.gameStatus = 'ended'
+      await winnerGrid.save()
+    }
+    game.status = 'finished'
+    await game.save()
+    const curGrid = await Grid.findByOrFail('userId', userId)
+    curGrid.gameStatus = 'ended'
+    await curGrid.save()
+  }
 }

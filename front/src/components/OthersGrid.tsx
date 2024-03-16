@@ -6,13 +6,13 @@ const OthersGrid = ({
 }: {
   usersGamesGrids: userGameGrid[];
 }) => {
-  console.log('grid', usersGamesGrids[0]);
+  console.log('grid', usersGamesGrids);
   return (
     <div className="flex gap-x-24 justify-center items-center w-full">
       {usersGamesGrids.map((userGameGrid: userGameGrid) => (
         <div key={userGameGrid.username}>
           <h3>{userGameGrid.username}</h3>
-          <GameGrid grid={userGameGrid.grid} small={true} />
+          <GameGrid userGameGrid={userGameGrid} small={true} />
         </div>
       ))}
     </div>

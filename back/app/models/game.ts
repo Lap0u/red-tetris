@@ -24,16 +24,15 @@ export default class Game extends BaseModel {
   @column()
   declare userId: number
 
-
   public generatePiecesList() {
     const pieceTypes: PieceType[] = ['line', 'square', 'l', 'reverse_l', 't', 'z', 'reverse_z'] // Array of possible piece types
     const piecesList: PieceService[] = []
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 100; i++) {
       const randomTypeIndex = Math.floor(Math.random() * pieceTypes.length) // Generate a random index
       const randomType = pieceTypes[randomTypeIndex] // Use the random index to select a piece type
       const piece = new PieceService(randomTypeIndex + 1, 5, 0, randomType) // Create a piece with the random type
       piecesList.push(piece) // Add the piece to the list
     }
-    return piecesList;
+    return piecesList
   }
 }

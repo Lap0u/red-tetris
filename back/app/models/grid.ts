@@ -3,6 +3,7 @@ import PieceService from '#services/piece_service'
 import { v4 as uuidv4 } from 'uuid'
 import env from '#start/env'
 import { Socket } from 'socket.io'
+import { handleEndGame } from '#controllers/sockets_controller'
 
 export default class Grid extends BaseModel {
   @column({ isPrimary: true })
@@ -15,7 +16,7 @@ export default class Grid extends BaseModel {
 
   @column({
     prepare: (value: PieceService[]) => JSON.stringify(value),
-    consume: (value: string) => JSON.parse(JSON.stringify(value))
+    consume: (value: string) => JSON.parse(JSON.stringify(value)),
   })
   declare piecesList: PieceService[]
 
@@ -78,10 +79,16 @@ export default class Grid extends BaseModel {
     for (let i = 0; i < piece.shape.length; i++) {
       for (let j = 0; j < piece.shape[i].length; j++) {
         if (piece.shape[i][j] === 1) {
-          this.grid[piece.y + i][piece.x + j] = 8 // We use 8 to represent a landed piece
+          if (this.grid[piece.y + i][piece.x + j] === 8) {
+            this.gameStatus = 'ended'
+            console.log('someOneDied')
+            return false //Stop placing the piece and handle game over.
+          }
+          this.grid[piece.y + i][piece.x + j] = 8
         }
       }
     }
+    return true
   }
   public toJSON() {
     return this.grid
@@ -112,7 +119,7 @@ export default class Grid extends BaseModel {
   private allocateCurrentPiece() {
     const nextPiece = this.piecesList.shift()
     if (nextPiece === undefined) return undefined
-    const currentPiece =  new PieceService(nextPiece.id, nextPiece.x, nextPiece.y, nextPiece.type)
+    const currentPiece = new PieceService(nextPiece.id, nextPiece.x, nextPiece.y, nextPiece.type)
     currentPiece.addGrid(this)
     return currentPiece
   }
@@ -120,7 +127,14 @@ export default class Grid extends BaseModel {
   public gameLoop(socket: Socket, roomId: string, playerId: number, username: string) {
     this.gameStatus = 'pending'
     const id = setInterval(() => {
-      if (this.gameStatus === 'ended') clearInterval(id)
+      if (this.gameStatus === 'ended') {
+        socket.to(roomId).emit('playerDead', { username })
+        socket.emit('playerDead', { username })
+        clearInterval(id)
+        handleEndGame(socket, roomId, playerId)
+        //TODO: checker si tous les joueurs sont morts et si oui arreter le jeu(besoin de stocker la grid en db)
+        return
+      }
       // If there is no current piece, we take the next one from the list and check if lines should be removed
       if (this.currentPiece === undefined) {
         this.currentPiece = this.allocateCurrentPiece()
@@ -132,6 +146,8 @@ export default class Grid extends BaseModel {
         if (this.currentPiece === undefined) {
           this.gameStatus = 'ended'
           clearInterval(id)
+          handleEndGame(socket, roomId, playerId)
+          //TODO: checker si tous les joueurs sont morts et si oui arreter le jeu(besoin de stocker la grid en db)
           return
         }
       }
@@ -141,7 +157,6 @@ export default class Grid extends BaseModel {
         clearInterval(id)
         return
       }
-      console.log('this.currentPiece ==>', this.currentPiece.type)
       // We move the piece down and check if it has landed
       if (this.currentPiece.move('down') === -1) {
         this.currentPiece.status = 'landed'
@@ -155,6 +170,6 @@ export default class Grid extends BaseModel {
       const completeGrid = this.getCompleteGrid()
       socket.to(roomId).emit('myNewGrid', { completeGrid, playerId, username })
       socket.emit('myNewGrid', { completeGrid, playerId, username })
-    }, 200)
+    }, 20 * playerId)
   }
 }
