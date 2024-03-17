@@ -4,9 +4,10 @@ import { useNavigate } from 'react-router-dom';
 
 type EndGameModalProps = {
   isWinner: boolean;
+  score: number;
 };
 
-const EndGameModal: React.FC<EndGameModalProps> = ({ isWinner }) => {
+const EndGameModal: React.FC<EndGameModalProps> = ({ isWinner, score }) => {
   const navigate = useNavigate();
   return (
     <div className="bg-white rounded-lg p-8">
@@ -18,11 +19,18 @@ const EndGameModal: React.FC<EndGameModalProps> = ({ isWinner }) => {
           ? 'You are the champion! Well done!'
           : 'Better luck next time!'}
       </p>
+      <p>You scored {score} points</p>
       <div className="flex justify-center gap-x-4">
         <MyButton
           text="Return to Lobby"
           onClick={() => {
             navigate('/lobby');
+          }}
+        />
+        <MyButton
+          text="Highscores"
+          onClick={() => {
+            navigate('/score');
           }}
         />
       </div>
