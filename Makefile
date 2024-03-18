@@ -11,24 +11,24 @@ NAME		= red-tetris
 
 $(NAME):
 			@printf "$(BLUE)Launch $(NAME)...$(RESET)\n"
-			@docker-compose up -d
+			@docker --tls compose up -d
 			@printf " $(GREEN)[$(NAME) up][✔] $(RESET)\n"
 
 all:		 $(NAME)
 
 down:
 			@printf "$(RED)Delete containers...$(RESET)\n"
-			@docker-compose down
+			@docker compose down
 			@printf "$(RED)[$(NAME) down]$(RESET)\n"
 
 start:
 			@printf "$(LIGHTBLUE)Start containers...$(RESET)\n"
-			@docker-compose start
+			@docker compose start
 			@printf " $(GREEN)[$(NAME) start][✔] $(RESET)\n"
 
 stop:
 			@printf "$(LIGHTBLUE)Stop containers...$(RESET)\n"
-			@docker-compose stop
+			@docker compose stop
 			@printf " $(GREEN)[$(NAME) stop][✔] $(RESET)\n"
 
 restart:	stop start
@@ -40,24 +40,24 @@ migrations:
 
 logFront:
 			@printf "$(MAGENTA)Show frontend logs...$(RESET)\n"
-			@docker-compose logs -f --tail=100 react
+			@docker compose logs -f --tail=100 react
 
 logBack:
 			@printf "$(MAGENTA)Show backend logs...$(RESET)\n"
-			@docker-compose logs -f --tail=100 adonis
+			@docker compose logs -f --tail=100 adonis
 
 logDb:
 			@printf "$(MAGENTA)Show db logs...$(RESET)\n"
-			@docker-compose logs -f --tail=100 postgres
+			@docker compose logs -f --tail=100 postgres
 
 build:
 			@printf "$(BLUE)Build images, containers and volumes...$(RESET)\n"
-			@docker-compose up --build -d
+			@docker compose up --build -d
 			@printf " $(GREEN)[$(NAME) build][✔] $(RESET)\n"
 
 downVolume:
 			@printf "$(RED)Delete containers and volumes...$(RESET)\n"
-			@docker-compose down -v
+			@docker compose down -v
 			@printf "$(RED)[$(NAME) down volumes]$(RESET)\n"
 
 re:			down all
