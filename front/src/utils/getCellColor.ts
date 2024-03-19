@@ -1,4 +1,9 @@
-export const getCellColor = (cell: number) => {
+import { AvailableGridColors } from '../dto/Grid';
+
+export const getCellColor = (
+  cell: number,
+  defaultColor: AvailableGridColors
+) => {
   switch (cell) {
     case 1:
       return 'bg-[#00FFFF]';
@@ -17,6 +22,6 @@ export const getCellColor = (cell: number) => {
     case 8:
       return 'bg-[#FF00FF]';
     default:
-      return 'bg-gray-500';
+      return defaultColor;
   }
 };

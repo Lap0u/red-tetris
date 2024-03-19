@@ -5,12 +5,16 @@ import PlayersList from '../components/PlayersList';
 import { User } from '../dto/User';
 import { socket } from '../App';
 import useCheckGameId from '../hooks/useCheckGameId';
+import { AvailableGridColors } from '../dto/Grid';
+import CustomizeGrid from '../components/CustomizeGrid';
 
 const PregamePage = ({ user }: { user: User }) => {
   const { gameId } = useParams();
   const navigate = useNavigate();
   const [players, setPlayers] = useState<User[]>([]);
   const [notGameOwner, setNotGameOwner] = useState(false);
+  const [gridColor, setGridColor] =
+    useState<AvailableGridColors>('bg-gray-600');
   useCheckGameId();
 
   useEffect(() => {
@@ -34,19 +38,21 @@ const PregamePage = ({ user }: { user: User }) => {
   };
   return (
     <div className="w-screen h-screen gap-x-32 flex justify-center items-center">
-      <div className="flex flex-col justify-center items-center
+      <CustomizeGrid gridColor={gridColor} setGridColor={setGridColor} />
+      <div
+        className="flex flex-col justify-center items-center
       h-fit gap-y-4">
-      <MyButton
-            onClick={startGame}
-            text="Start Game"
-            disabled={notGameOwner}
-          />
-      {notGameOwner && (
-        <p className="w-48 text-red-500 text-xs text-center">
-          Wait for the game's owner to launch...
-        </p>
-      )}
-    </div>
+        <MyButton
+          onClick={startGame}
+          text="Start Game"
+          disabled={notGameOwner}
+        />
+        {notGameOwner && (
+          <p className="w-48 text-red-500 text-xs text-center">
+            Wait for the game's owner to launch...
+          </p>
+        )}
+      </div>
       <PlayersList players={players} />
     </div>
   );

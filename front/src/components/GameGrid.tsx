@@ -1,7 +1,15 @@
-import { Grid } from '../dto/Grid';
+import { AvailableGridColors, Grid } from '../dto/Grid';
 import { getCellColor } from '../utils/getCellColor';
 
-const GameGrid = ({ grid, small = false }: { grid: Grid; small?: boolean }) => {
+const GameGrid = ({
+  grid,
+  small = false,
+  gridColor = '600',
+}: {
+  grid: Grid;
+  small?: boolean;
+  gridColor: AvailableGridColors;
+}) => {
   const gridHeight = 20;
   const gridWidth = 10;
   const cellSize = small ? 'w-2 h-2' : 'w-8 h-8'; // Adjusted to keep as string for class concatenation
@@ -13,13 +21,13 @@ const GameGrid = ({ grid, small = false }: { grid: Grid; small?: boolean }) => {
           {row.map((cell, x) => (
             <div
               key={y + '-' + x}
-              className={`${cellSize} border ${getCellColor(cell)}`}
+              className={`${cellSize} border ${getCellColor(cell, gridColor)}`}
             />
           ))}
           {Array.from({ length: gridWidth - row.length }).map((_, x) => (
             <div
               key={'empty-' + y + '-' + x}
-              className={`${cellSize} border bg-gray-500`}
+              className={`${cellSize} border ${gridColor}`}
             />
           ))}
         </div>
@@ -29,7 +37,7 @@ const GameGrid = ({ grid, small = false }: { grid: Grid; small?: boolean }) => {
           {Array.from({ length: gridWidth }).map((_, x) => (
             <div
               key={'empty-' + y + '-' + x}
-              className={`${cellSize} border bg-gray-500`}
+              className={`${cellSize} border ${gridColor}`}
             />
           ))}
         </div>

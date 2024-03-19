@@ -7,10 +7,16 @@ import { User } from '../dto/User';
 import { Grid, userGameGrid } from '../dto/Grid';
 import OthersGrid from '../components/OthersGrid';
 import useCheckGameId from '../hooks/useCheckGameId';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
 
 const GamePage = ({ user }: { user: User }) => {
+  const colorGrid = useSelector(
+    (state: RootState) => state.gridColor.gridColor
+  );
+  console.log('colorGrid', colorGrid);
+
   const { gameId } = useParams();
-  // const navigate = useNavigate();
   const gameAreaRef = useRef<HTMLDivElement>(null); // Create a ref for the game area div
 
   useCheckGameId();
@@ -68,7 +74,7 @@ const GamePage = ({ user }: { user: User }) => {
       style={{ outline: 'none' }} // Optional: Remove focus outline for aesthetics
     >
       <OthersGrid usersGamesGrids={othersGrid} />
-      <GameGrid grid={grid} />
+      <GameGrid grid={grid} gridColor={colorGrid} />
     </div>
   );
 };
