@@ -5,6 +5,8 @@ import PlayersList from '../components/PlayersList';
 import { User } from '../dto/User';
 import { socket } from '../App';
 import useCheckGameId from '../hooks/useCheckGameId';
+import { AvailableGameSpeed } from '../dto/AvailableGameSpeed';
+import CustomizeGameSpeed from '../components/CustomizeGameSpeed';
 import createGrids from '../fetch/createGrids';
 
 const PregamePage = ({ user }: { user: User }) => {
@@ -12,9 +14,15 @@ const PregamePage = ({ user }: { user: User }) => {
   const navigate = useNavigate();
   const [players, setPlayers] = useState<User[]>([]);
   const [notGameOwner, setNotGameOwner] = useState(false);
+  const [gameSpeed, setGameSpeed] =
+    useState<AvailableGameSpeed>('intermediate');
   useCheckGameId();
 
   useEffect(() => {
+    socket.on('gameSpeed', (gameSpeed) => {
+      console.log('tttttt', gameSpeed);
+      setGameSpeed(gameSpeed);
+    });
     socket.on(`gameStart`, () => {
       navigate(`/game/${gameId}/${user.username}`);
     });
@@ -32,11 +40,18 @@ const PregamePage = ({ user }: { user: User }) => {
   }, [gameId, navigate, user.username, user.id]);
   const startGame = async () => {
     await createGrids(gameId).then(() => {
-      socket.emit('askGameStart', { room: gameId, userId: user.id });
+      socket.emit('askGameStart', { room: gameId, userId: user.id, gameSpeed });
     });
   };
   return (
     <div className="w-screen h-screen gap-x-32 flex justify-center items-center">
+      {!notGameOwner && (
+        <CustomizeGameSpeed
+          gameSpeed={gameSpeed}
+          gameId={gameId}
+          userId={user.id}
+        />
+      )}
       <div
         className="flex flex-col justify-center items-center
       h-fit gap-y-4">

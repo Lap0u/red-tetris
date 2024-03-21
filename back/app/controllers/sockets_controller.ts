@@ -5,6 +5,15 @@ import User from '#models/user'
 import { keyStroke } from '#services/piece_service'
 import { Socket } from 'socket.io'
 
+type AvailableGameSpeed = 'beginner' | 'intermediate' | 'expert' | 'le X'
+
+const gameSpeed = {
+  'beginner': 400,
+  'intermediate': 200,
+  'expert': 100,
+  'le X': 50,
+}
+
 export const handleRoomJoin = async (socket: Socket, roomId: string, userId: number) => {
   const game = await Game.findOrFail(roomId)
   game.status = 'waiting'
@@ -40,12 +49,13 @@ export const handleRoomLeave = async (userId: number) => {
   }
 }
 
-export const handleGameStart = async (socket: Socket, data: { room: string; userId: number }) => {
-  const { room, userId } = data
-  const game = await Game.findOrFail(room)
-  const user = await User.findOrFail(userId)
-  // user is not owner of the game
-  if (user.id !== game.userId) return ''
+export const handleGameStart = async (
+  socket: Socket,
+  data: { room: string; userId: number; gameSpeed: AvailableGameSpeed }
+) => {
+  const game = await Game.findOrFail(data.room)
+  const user = await User.findOrFail(data.userId)
+  if (user.id !== game.userId) return // user is not owner of the game`
   game.status = 'playing'
 
   // game.save in promise to avoid race conditions with socket.to/emit gameStart
@@ -74,8 +84,20 @@ export const handleGameStart = async (socket: Socket, data: { room: string; user
       console.error('No grid find for player: ', player.id)
       return
     }
-    grid.gameLoop(socket, data.room, player.id, player.username)
+    grid.gameLoop(socket, data.room, player.id, player.username, gameSpeed[data.gameSpeed])
   }
+}
+
+export const handleGameSpeed = async (
+  socket: Socket,
+  data: { room: string; userId: number; gameSpeed: AvailableGameSpeed }
+) => {
+  const game = await Game.findOrFail(data.room)
+  const user = await User.findOrFail(data.userId)
+  if (user.id !== game.userId) return // user is not owner of the game`
+  //garder au cas ou on veut pouvoir prevenir les autres joueurs
+  socket.to(data.room).emit('gameSpeed', data.gameSpeed)
+  socket.emit('gameSpeed', data.gameSpeed)
 }
 
 export const handleKeyPress = async (data: { room: string; userId: string; key: keyStroke }) => {
