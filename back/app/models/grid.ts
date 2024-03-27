@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from 'uuid'
 import env from '#start/env'
 import { Socket } from 'socket.io'
 import { handleEndGame } from '#controllers/sockets_controller'
+import Score from './score.js'
+import Game from '#models/game'
 
 export default class Grid extends BaseModel {
   @column({ isPrimary: true })
@@ -22,6 +24,9 @@ export default class Grid extends BaseModel {
 
   @column()
   declare userId: number
+
+  @column()
+  declare score: number
 
   width: number
   height: number
@@ -81,7 +86,6 @@ export default class Grid extends BaseModel {
         if (piece.shape[i][j] === 1) {
           if (this.grid[piece.y + i][piece.x + j] === 8) {
             this.gameStatus = 'ended'
-            console.log('someOneDied')
             return false //Stop placing the piece and handle game over.
           }
           this.grid[piece.y + i][piece.x + j] = 8
@@ -127,16 +131,34 @@ export default class Grid extends BaseModel {
   public gameLoop(socket: Socket, roomId: string, playerId: number, username: string) {
     this.gameStatus = 'pending'
     const id = setInterval(() => {
+      Game.findOrFail(roomId).then((game) => {
+        //check if the game has ended (updated by handleEndGame in db)
+        if (game.status === 'finished') {
+          this.gameStatus = 'ended'
+          clearInterval(id)
+          return
+        }
+      })
       if (this.gameStatus === 'ended') {
-        socket.to(roomId).emit('playerDead', { username })
-        socket.emit('playerDead', { username })
+        const saveScore = async () => {
+          const grid = await Grid.findByOrFail('userId', playerId)
+          const score = { username: username, score: grid.score }
+          Score.create(score)
+          socket.to(roomId).emit('playerDead', { username, score: score.score })
+          socket.emit('playerDead', { username, score: score.score })
+        }
+        saveScore()
         clearInterval(id)
         handleEndGame(socket, roomId, playerId)
-        //TODO: checker si tous les joueurs sont morts et si oui arreter le jeu(besoin de stocker la grid en db)
         return
       }
       // If there is no current piece, we take the next one from the list and check if lines should be removed
       if (this.currentPiece === undefined) {
+        // ** On fake le score en attendant d'avoir des mouvements fonctionnels **
+        Grid.findByOrFail('userId', playerId).then((grid) => {
+          grid.score += 200 + Math.floor(Math.random() * 100)
+          grid.save()
+        })
         this.currentPiece = this.allocateCurrentPiece()
         const lines = this.checkLines()
         if (lines.length > 0) {
@@ -147,7 +169,6 @@ export default class Grid extends BaseModel {
           this.gameStatus = 'ended'
           clearInterval(id)
           handleEndGame(socket, roomId, playerId)
-          //TODO: checker si tous les joueurs sont morts et si oui arreter le jeu(besoin de stocker la grid en db)
           return
         }
       }

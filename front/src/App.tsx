@@ -12,6 +12,7 @@ import { setUser } from './store/usersSlice';
 import getUser from './fetch/getUser';
 import PregamePage from './pages/pregamePage';
 import { User } from './dto/User';
+import Highscore from './pages/highscorePage';
 
 export const socket = io('http://localhost:3334');
 const App = () => {
@@ -47,6 +48,14 @@ const App = () => {
           element={
             <ProtectedRoute isAuthLoading={isAuthLoading} user={user}>
               <PregamePage user={user as User} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="score"
+          element={
+            <ProtectedRoute isAuthLoading={isAuthLoading} user={user}>
+              <Highscore />
             </ProtectedRoute>
           }
         />

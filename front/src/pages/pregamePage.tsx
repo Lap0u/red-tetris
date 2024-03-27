@@ -32,24 +32,25 @@ const PregamePage = ({ user }: { user: User }) => {
   }, [gameId, navigate, user.username, user.id]);
   const startGame = async () => {
     await createGrids(gameId).then(() => {
-      socket.emit('askGameStart', { room: gameId, userId: user.id })
+      socket.emit('askGameStart', { room: gameId, userId: user.id });
     });
   };
   return (
     <div className="w-screen h-screen gap-x-32 flex justify-center items-center">
-      <div className="flex flex-col justify-center items-center
+      <div
+        className="flex flex-col justify-center items-center
       h-fit gap-y-4">
-      <MyButton
-            onClick={startGame}
-            text="Start Game"
-            disabled={notGameOwner}
-          />
-      {notGameOwner && (
-        <p className="w-48 text-red-500 text-xs text-center">
-          Wait for the game's owner to launch...
-        </p>
-      )}
-    </div>
+        <MyButton
+          onClick={startGame}
+          text="Start Game"
+          disabled={notGameOwner}
+        />
+        {notGameOwner && (
+          <p className="w-48 text-red-500 text-xs text-center">
+            Wait for the game's owner to launch...
+          </p>
+        )}
+      </div>
       <PlayersList players={players} />
     </div>
   );

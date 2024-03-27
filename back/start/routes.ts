@@ -8,6 +8,7 @@
 */
 
 import GamesController from '#controllers/games_controller'
+import ScoresController from '#controllers/scores_controller'
 import GridsController from '#controllers/grids_controllers'
 import UsersController from '#controllers/users_controller'
 import router from '@adonisjs/core/services/router'
@@ -33,6 +34,13 @@ router
     router.post('/remove', [UsersController, 'remove'])
   })
   .prefix('user')
+
+router
+  .group(() => {
+    router.get('/', [ScoresController, 'getScores'])
+    // router.post('/create', [ScoresController, 'createScores'])
+  })
+  .prefix('score')
 router
   .group(() => {
     router.post('/create', [GridsController, 'createGrids'])

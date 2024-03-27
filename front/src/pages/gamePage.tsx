@@ -13,6 +13,7 @@ const GamePage = ({ user }: { user: User }) => {
   const { gameId } = useParams();
   const gameAreaRef = useRef<HTMLDivElement>(null); // Create a ref for the game area div
   const [open, setOpen] = useState(false);
+  const [playerScore, setPlayerScore] = useState<number>(0);
   // const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   useCheckGameId();
@@ -26,11 +27,12 @@ const GamePage = ({ user }: { user: User }) => {
   const [isWinner, setIsWinner] = useState<boolean>(false);
   useEffect(() => {
     console.log(open, isWinner);
-    socket.on('gameEnd', (userId: number) => {
-      if (user.id === userId) {
-        setIsWinner(true)
+    socket.on('gameEnd', (data) => {
+      if (user.id === data.userId) {
+        setIsWinner(true);
+        setPlayerScore(data.score);
       }
-      setOpen(true)
+      setOpen(true);
     });
 
     socket.on('myNewGrid', ({ completeGrid, playerId, username }) => {
@@ -56,15 +58,16 @@ const GamePage = ({ user }: { user: User }) => {
         });
       }
     });
-    socket.on('playerDead', ({ username }) => {
+    socket.on('playerDead', ({ username, score }) => {
       console.log('someoneDied', user?.username, username);
-      if (user?.username === username)
+      if (user?.username === username) {
         setGrid((prev) => {
           const newGame = { ...prev, playerDead: true };
           console.log('newGame', newGame);
           return newGame;
         });
-      else {
+        setPlayerScore(score);
+      } else {
         setOthersGrid((prev) => {
           const index = prev.findIndex((p) => p.username === username);
           const newGrids = [...prev];
@@ -108,15 +111,12 @@ const GamePage = ({ user }: { user: User }) => {
         className="w-full h-full flex justify-center items-center gap-x-8"
         style={{ outline: 'none' }} // Optional: Remove focus outline for aesthetics
       >
-        <OthersGrid usersGamesGrids={othersGrid} />
+        {othersGrid.length === 0 && <OthersGrid usersGamesGrids={othersGrid} />}
         <GameGrid userGameGrid={grid} />
       </div>
-      <Modal
-        open={open}
-        onClose={handleClose}
-      >
+      <Modal open={open} onClose={handleClose}>
         <div className="flex justify-center items-center h-full bg-gray-900 bg-opacity-75">
-          <EndGameModal isWinner={isWinner} />
+          <EndGameModal isWinner={isWinner} score={playerScore} />
         </div>
       </Modal>
     </div>

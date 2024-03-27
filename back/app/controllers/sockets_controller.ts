@@ -1,5 +1,6 @@
 import Game from '#models/game'
 import Grid from '#models/grid'
+import Score from '#models/score'
 import User from '#models/user'
 import { keyStroke } from '#services/piece_service'
 import { Socket } from 'socket.io'
@@ -95,6 +96,16 @@ export const handleGetOwners = async (socket: Socket) => {
   socket.emit('getOwners', ownerIdsNames)
 }
 
+const savePlayerEndGameAndReturnScore = async (curUser: User, socket: Socket) => {
+  const { id, username } = curUser
+  const lastPlayerGrid = await Grid.findByOrFail('userId', id)
+  lastPlayerGrid.gameStatus = 'ended'
+  await lastPlayerGrid.save()
+  const score = { username: username, score: lastPlayerGrid.score }
+  socket.emit('gameEnd', { userId: curUser.id, score: score.score })
+  return score
+}
+
 export const handleEndGame = async (socket: Socket, roomId: string, userId: number) => {
   const game = await Game.findOrFail(roomId)
   const players = await game.related('users').query()
@@ -105,19 +116,14 @@ export const handleEndGame = async (socket: Socket, roomId: string, userId: numb
   const playersLeft = players.filter((player) => player.isDead === false)
   if (playersLeft.length === 1 || players.length === 1) {
     if (players.length === 1) {
-      socket.emit('gameEnd', players[0].id)
-    }
-    else {
-      socket.to(roomId).emit('gameEnd', playersLeft[0].id)
-      socket.emit('gameEnd', playersLeft[0].id)
-      const winnerGrid = await Grid.findByOrFail('userId', playersLeft[0].id)
-      winnerGrid.gameStatus = 'ended'
-      await winnerGrid.save()
+      await savePlayerEndGameAndReturnScore(players[0], socket)
+      // await Score.create(score)
+    } else {
+      const score = await savePlayerEndGameAndReturnScore(playersLeft[0], socket)
+      socket.to(roomId).emit('gameEnd', { userId: playersLeft[0].id, score: score.score })
+      await Score.create(score)
     }
     game.status = 'finished'
     await game.save()
-    const curGrid = await Grid.findByOrFail('userId', userId)
-    curGrid.gameStatus = 'ended'
-    await curGrid.save()
   }
 }

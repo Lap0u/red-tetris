@@ -7,14 +7,15 @@ import Grid from '#models/grid'
 export default class GridsController {
   async createGrids({ request, response }: HttpContext) {
     const { gameId } = request.all()
-    const game = await Game.findOrFail(gameId);
+    const game = await Game.findOrFail(gameId)
     const players = await game.related('users').query()
     const piecesList = game.generatePiecesList()
 
     const gridData = players.map((player) => {
       return {
         piecesList: [...piecesList],
-        userId: player.id
+        userId: player.id,
+        score: 0,
       }
     })
     try {
@@ -26,9 +27,7 @@ export default class GridsController {
         await grid.setPiecesList(piecesList)
       }
       return response.json(grids)
-
-    }
-    catch(error) {
+    } catch (error) {
       console.log(error)
       response.status(500).send({ error: 'An error occurred on GRID creation' })
     }
