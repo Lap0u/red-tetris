@@ -128,7 +128,13 @@ export default class Grid extends BaseModel {
     return currentPiece
   }
 
-  public gameLoop(socket: Socket, roomId: string, playerId: number, username: string) {
+  public gameLoop(
+    socket: Socket,
+    roomId: string,
+    playerId: number,
+    username: string,
+    gameSpeed: number
+  ) {
     this.gameStatus = 'pending'
     const id = setInterval(() => {
       Game.findOrFail(roomId).then((game) => {
@@ -191,6 +197,6 @@ export default class Grid extends BaseModel {
       const completeGrid = this.getCompleteGrid()
       socket.to(roomId).emit('myNewGrid', { completeGrid, playerId, username })
       socket.emit('myNewGrid', { completeGrid, playerId, username })
-    }, 20 * playerId)
+    }, gameSpeed)
   }
 }

@@ -13,6 +13,7 @@ import 'reflect-metadata'
 import { Ignitor, prettyPrintError } from '@adonisjs/core'
 import { Server } from 'socket.io'
 import {
+  handleGameSpeed,
   handleGameStart,
   handleKeyPress,
   handleGetOwners,
@@ -34,6 +35,10 @@ io.on('connection', (socket) => {
     userId = data.userId
     // Here you can associate the userId with the socket.id
     // For example, using a Map or an object to keep track
+  })
+
+  socket.on('askSetGameSpeed', (data) => {
+    handleGameSpeed(socket, data)
   })
 
   socket.on('disconnect', () => {
