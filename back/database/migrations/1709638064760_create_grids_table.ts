@@ -8,6 +8,7 @@ export default class extends BaseSchema {
       table.string('id').primary()
       table.jsonb('pieces_list').notNullable()
       table.integer('score').notNullable().defaultTo(0)
+      table.integer('speed').notNullable().defaultTo(200)
       table.integer('user_id').unsigned().references('users.id').onDelete('CASCADE')
     })
   }

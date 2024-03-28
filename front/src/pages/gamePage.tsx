@@ -109,6 +109,7 @@ const GamePage = ({ user }: { user: User }) => {
       <div
         ref={gameAreaRef} // Use the ref here
         className="w-full h-full flex justify-center items-center gap-x-8"
+        tabIndex={-1} // Make the div focusable
         style={{ outline: 'none' }} // Optional: Remove focus outline for aesthetics
       >
         {othersGrid.length === 0 && <OthersGrid usersGamesGrids={othersGrid} />}

@@ -23,8 +23,11 @@ const PregamePage = ({ user }: { user: User }) => {
       console.log('tttttt', gameSpeed);
       setGameSpeed(gameSpeed);
     });
-    socket.on(`gameStart`, () => {
+    socket.on('gameStarted', () => {
       navigate(`/game/${gameId}/${user.username}`);
+    });
+    socket.on(`gameStart`, () => {
+      socket.emit('playerReady', { room: gameId, userId: user.id });
     });
     socket.on(`playerJoined`, (players) => {
       setPlayers(players);

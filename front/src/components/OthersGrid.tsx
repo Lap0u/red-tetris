@@ -6,7 +6,6 @@ const OthersGrid = ({
 }: {
   usersGamesGrids: userGameGrid[];
 }) => {
-  console.log('grid', usersGamesGrids);
   return (
     <div className="flex gap-x-24 justify-center items-center w-full">
       {usersGamesGrids.map((userGameGrid: userGameGrid) => (

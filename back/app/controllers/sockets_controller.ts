@@ -48,6 +48,21 @@ export const handleRoomLeave = async (userId: number) => {
     }
   }
 }
+export const handlePlayerReady = async (
+  socket: Socket,
+  data: { room: string; userId: number; gameSpeed: AvailableGameSpeed }
+) => {
+  const player = await User.findOrFail(data.userId)
+  const grid = await Grid.findByOrFail('userId', data.userId)
+  player.isDead = false
+  await player.save()
+  if (!grid) {
+    console.error('No grid find for player: ', player.id)
+    return
+  }
+  socket.emit('gameStarted')
+  grid.gameLoop(socket, data.room, player.id, player.username, grid.speed)
+}
 
 export const handleGameStart = async (
   socket: Socket,
@@ -70,21 +85,10 @@ export const handleGameStart = async (
 
   const players = await game.related('users').query()
 
-  const grids = []
   for (const player of players) {
     const curGrid = await Grid.findByOrFail('userId', player.id)
-    grids.push(curGrid)
-  }
-
-  for (const player of players) {
-    player.isDead = false
-    await player.save()
-    const grid = grids.find((grid) => grid.userId === player.id)
-    if (!grid) {
-      console.error('No grid find for player: ', player.id)
-      return
-    }
-    grid.gameLoop(socket, data.room, player.id, player.username, gameSpeed[data.gameSpeed])
+    curGrid.speed = gameSpeed[data.gameSpeed]
+    await curGrid.save()
   }
 }
 
@@ -98,16 +102,6 @@ export const handleGameSpeed = async (
   //garder au cas ou on veut pouvoir prevenir les autres joueurs
   socket.to(data.room).emit('gameSpeed', data.gameSpeed)
   socket.emit('gameSpeed', data.gameSpeed)
-}
-
-export const handleKeyPress = async (data: { room: string; userId: string; key: keyStroke }) => {
-  console.log('keyPress', data)
-  const game = await Game.findOrFail(data.room)
-  console.log('survived game findOrFail', game.id)
-  const user = await User.findOrFail(data.userId)
-  console.log('survived user findOrFail', user.id)
-  console.log('currentPiece', user.grid.currentPiece)
-  user.grid.currentPiece?.movePiece(data.key)
 }
 
 export const handleGetOwners = async (socket: Socket) => {

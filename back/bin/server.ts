@@ -15,8 +15,8 @@ import { Server } from 'socket.io'
 import {
   handleGameSpeed,
   handleGameStart,
-  handleKeyPress,
   handleGetOwners,
+  handlePlayerReady,
   handleRoomJoin,
   handleRoomLeave,
 } from '#controllers/sockets_controller'
@@ -41,6 +41,9 @@ io.on('connection', (socket) => {
     handleGameSpeed(socket, data)
   })
 
+  socket.on('playerReady', (data) => {
+    handlePlayerReady(socket, data)
+  })
   socket.on('disconnect', () => {
     // Now you can use the userId that was associated with this socket
     if (userId) {
@@ -56,9 +59,6 @@ io.on('connection', (socket) => {
   })
   socket.on('askGameStart', (data) => {
     handleGameStart(socket, data)
-  })
-  socket.on('keyPress', (data) => {
-    handleKeyPress(data)
   })
   socket.on('askGetOwners', () => {
     handleGetOwners(socket)

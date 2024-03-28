@@ -1,15 +1,14 @@
 import Grid from '#models/grid'
 import env from '#start/env'
 
-
 export type PieceType = 'line' | 'square' | 'l' | 'reverse_l' | 't' | 'z' | 'reverse_z'
 export type keyStroke =
   | 'ArrowUp'
   | 'ArrowDown'
   | 'ArrowLeft'
   | 'ArrowRight'
-  | 'keyA'
-  | 'keyD'
+  | 'KeyA'
+  | 'KeyD'
   | 'Space'
 type MoveType = 'left' | 'right' | 'down' | 'fall'
 type RotateType = 'left' | 'right'
@@ -90,13 +89,13 @@ export default class PieceService {
       case 'ArrowLeft':
         this.move('left')
         break
-      case 'keyA':
+      case 'KeyA':
         this.rotate('left')
         break
       case 'ArrowRight':
         this.move('right')
         break
-      case 'keyD':
+      case 'KeyD':
         this.rotate('right')
         break
       case 'ArrowDown':
@@ -155,6 +154,7 @@ export default class PieceService {
     return true
   }
   rotate(rotation: RotateType) {
+    console.log('rotate', rotation)
     if (this.type === 'square') return
     if (rotation === 'left') this.#rotateMatrixLeft()
     if (rotation === 'right') this.#rotateMatrixRight()

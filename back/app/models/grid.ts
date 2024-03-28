@@ -6,6 +6,7 @@ import { Socket } from 'socket.io'
 import { handleEndGame } from '#controllers/sockets_controller'
 import Score from './score.js'
 import Game from '#models/game'
+import { io } from '../../bin/server.js'
 
 export default class Grid extends BaseModel {
   @column({ isPrimary: true })
@@ -27,6 +28,9 @@ export default class Grid extends BaseModel {
 
   @column()
   declare score: number
+
+  @column()
+  declare speed: number
 
   width: number
   height: number
@@ -136,6 +140,10 @@ export default class Grid extends BaseModel {
     gameSpeed: number
   ) {
     this.gameStatus = 'pending'
+    socket.on('keyPress', (data) => {
+      console.log('keypress grid', data)
+      this.currentPiece?.movePiece(data.key)
+    })
     const id = setInterval(() => {
       Game.findOrFail(roomId).then((game) => {
         //check if the game has ended (updated by handleEndGame in db)
