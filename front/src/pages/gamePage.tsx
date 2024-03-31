@@ -14,7 +14,6 @@ const GamePage = ({ user }: { user: User }) => {
   const gameAreaRef = useRef<HTMLDivElement>(null); // Create a ref for the game area div
   const [open, setOpen] = useState(false);
   const [playerScore, setPlayerScore] = useState<number>(0);
-  // const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   useCheckGameId();
 
@@ -27,15 +26,32 @@ const GamePage = ({ user }: { user: User }) => {
   const [isWinner, setIsWinner] = useState<boolean>(false);
   useEffect(() => {
     console.log(open, isWinner);
-    socket.on('gameEnd', (data) => {
-      if (user.id === data.userId) {
+    const handleGameEnd = ({
+      userId,
+      score,
+    }: {
+      userId: number;
+      score: number;
+    }) => {
+      if (user.id === userId) {
         setIsWinner(true);
-        setPlayerScore(data.score);
+        setPlayerScore(score);
       }
       setOpen(true);
-    });
+    };
 
-    socket.on('myNewGrid', ({ completeGrid, playerId, username }) => {
+    const handleNewGrid = ({
+      completeGrid,
+      playerId,
+      username,
+      invisible,
+    }: {
+      completeGrid: number[][];
+      playerId: number;
+      username: string;
+      invisible: boolean;
+    }) => {
+      console.log('invinsible', invisible, username);
       if (user?.id === playerId) {
         setGrid(() => {
           const newGrid = { username, grid: completeGrid, playerDead: false };
@@ -49,16 +65,23 @@ const GamePage = ({ user }: { user: User }) => {
               username,
               grid: completeGrid,
               playerDead: false,
+              invisible: invisible,
             };
             return [...prev, newGrid];
           }
           const newGrids = [...prev];
-          newGrids[index] = { ...prev[index], grid: completeGrid };
+          newGrids[index] = { ...prev[index], grid: completeGrid, invisible };
           return newGrids;
         });
       }
-    });
-    socket.on('playerDead', ({ username, score }) => {
+    };
+    const handlePlayerDead = ({
+      username,
+      score,
+    }: {
+      username: string;
+      score: number;
+    }) => {
       console.log('someoneDied', user?.username, username);
       if (user?.username === username) {
         setGrid((prev) => {
@@ -75,13 +98,16 @@ const GamePage = ({ user }: { user: User }) => {
           return newGrids;
         });
       }
-    });
-    return () => {
-      socket.off('myNewGrid', setGrid);
-      socket.off('playerDead', setGrid);
-      socket.off('gameEnd', setIsWinner);
     };
-  }, [user?.id, user?.username]);
+    socket.on('gameEnd', handleGameEnd);
+    socket.on('myNewGrid', handleNewGrid);
+    socket.on('playerDead', handlePlayerDead);
+    return () => {
+      socket.off('myNewGrid', handleNewGrid);
+      socket.off('playerDead', handlePlayerDead);
+      socket.off('gameEnd', handleGameEnd);
+    };
+  }, [othersGrid, user?.id, user?.username]);
 
   useEffect(() => {
     // Function to handle keydown events
@@ -112,7 +138,7 @@ const GamePage = ({ user }: { user: User }) => {
         tabIndex={-1} // Make the div focusable
         style={{ outline: 'none' }} // Optional: Remove focus outline for aesthetics
       >
-        {othersGrid.length === 0 && <OthersGrid usersGamesGrids={othersGrid} />}
+        {othersGrid.length !== 0 && <OthersGrid usersGamesGrids={othersGrid} />}
         <GameGrid userGameGrid={grid} />
       </div>
       <Modal open={open} onClose={handleClose}>
