@@ -6,7 +6,6 @@ import { Socket } from 'socket.io'
 import { handleEndGame } from '#controllers/sockets_controller'
 import Score from './score.js'
 import Game from '#models/game'
-import { io } from '../../bin/server.js'
 
 export default class Grid extends BaseModel {
   @column({ isPrimary: true })
@@ -140,6 +139,8 @@ export default class Grid extends BaseModel {
     gameSpeed: number
   ) {
     this.gameStatus = 'pending'
+    let invisible = false
+    let invisibleDelay = 0
     socket.on('keyPress', (data) => {
       console.log('keypress grid', data)
       this.currentPiece?.movePiece(data.key)
@@ -153,6 +154,8 @@ export default class Grid extends BaseModel {
           return
         }
       })
+      if (invisibleDelay <= 0) invisible = false
+      else invisibleDelay--
       if (this.gameStatus === 'ended') {
         const saveScore = async () => {
           const grid = await Grid.findByOrFail('userId', playerId)
@@ -175,6 +178,11 @@ export default class Grid extends BaseModel {
         })
         this.currentPiece = this.allocateCurrentPiece()
         const lines = this.checkLines()
+        if (lines.length >= 4) {
+          console.log('invisible', lines.length)
+          invisible = true
+          invisibleDelay = 25 // 25 * 200ms = 5s (pour la vitesse par défaut)
+        }
         if (lines.length > 0) {
           this.removeLines(lines)
         }
@@ -203,7 +211,7 @@ export default class Grid extends BaseModel {
         this.currentPiece = undefined
       }
       const completeGrid = this.getCompleteGrid()
-      socket.to(roomId).emit('myNewGrid', { completeGrid, playerId, username })
+      socket.to(roomId).emit('myNewGrid', { completeGrid, playerId, username, invisible })
       socket.emit('myNewGrid', { completeGrid, playerId, username })
     }, gameSpeed)
   }

@@ -3,4 +3,5 @@ export type userGameGrid = {
   username: string;
   grid: Grid;
   playerDead: boolean;
+  invisible?: boolean;
 };
