@@ -34,15 +34,4 @@ describe('CurrentGamesList', () => {
       await screen.findByText('No games available currently')
     ).toBeTruthy();
   });
-
-  // it('renders games when available', async () => {
-  //   // Mock getAvailableGames to return a mock games array
-  //   vi.mocked(getAvailableGames).mockResolvedValueOnce([
-  //     { id: 1, name: 'Game 1' },
-  //     { id: 2, name: 'Game 2' },
-  //   ]);
-  //   renderComponent();
-  //   expect(await screen.findByText('Join 0')).toBeTruthy();
-  //   expect(screen.getByText('Join 1')).toBeTruthy();
-  // });
 });

@@ -10,6 +10,7 @@ const Highscore = () => {
   useEffect(() => {
     const getUserScores = async () => {
       const scores: Score[] = await getScore();
+      if (!scores) return;
       scores.sort((a, b) => b.score - a.score);
       setScores(scores);
     };

@@ -50,6 +50,11 @@ logDb:
 			@printf "$(MAGENTA)Show db logs...$(RESET)\n"
 			@docker compose logs -f --tail=100 postgres
 
+test:
+			@printf "$(GREEN)Run tests...$(RESET)\n"
+			@cd ./back && npm run test
+			@cd ../front && npm run test
+
 build:
 			@printf "$(BLUE)Build images, containers and volumes...$(RESET)\n"
 			@docker compose up --build -d

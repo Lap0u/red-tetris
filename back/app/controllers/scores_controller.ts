@@ -8,8 +8,4 @@ export default class ScoresController {
   async getScores(context: HttpContext) {
     return this.scoreService.getScores(context)
   }
-
-  async createScores(context: HttpContext) {
-    return this.scoreService.createScores(context)
-  }
 }

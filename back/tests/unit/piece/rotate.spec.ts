@@ -1,9 +1,9 @@
-import Piece from '#models/piece'
+import PieceService from '#services/piece_service'
 import { test } from '@japa/runner'
 
-test.group('Piece rotation', () => {
+test.group('PieceService rotation', () => {
   test('Line rotation works properly', async ({ assert }) => {
-    const piece = new Piece(1, 5, 5, 'line')
+    const piece = new PieceService(1, 5, 5, 'line')
 
     assert.deepEqual(piece.shape, [
       [0, 0, 0, 0],
@@ -69,7 +69,7 @@ test.group('Piece rotation', () => {
     ])
   })
   test('Square rotation does not change', async ({ assert }) => {
-    const piece = new Piece(1, 5, 5, 'square')
+    const piece = new PieceService(1, 5, 5, 'square')
 
     assert.deepEqual(piece.shape, [
       [0, 1, 1, 0],
@@ -90,7 +90,7 @@ test.group('Piece rotation', () => {
     ])
   })
   test('L rotation works properly', async ({ assert }) => {
-    const piece = new Piece(1, 5, 5, 'l')
+    const piece = new PieceService(1, 5, 5, 'l')
 
     assert.deepEqual(piece.shape, [
       [1, 0, 0],
@@ -147,7 +147,7 @@ test.group('Piece rotation', () => {
     ])
   })
   test('Reverse L rotation works properly', async ({ assert }) => {
-    const piece = new Piece(1, 5, 5, 'reverse_l')
+    const piece = new PieceService(1, 5, 5, 'reverse_l')
 
     assert.deepEqual(piece.shape, [
       [0, 0, 1],
@@ -204,7 +204,7 @@ test.group('Piece rotation', () => {
     ])
   })
   test('T rotation works properly', async ({ assert }) => {
-    const piece = new Piece(1, 5, 5, 't')
+    const piece = new PieceService(1, 5, 5, 't')
 
     assert.deepEqual(piece.shape, [
       [0, 1, 0],
@@ -261,7 +261,7 @@ test.group('Piece rotation', () => {
     ])
   })
   test('Z rotation works properly', async ({ assert }) => {
-    const piece = new Piece(1, 5, 5, 'z')
+    const piece = new PieceService(1, 5, 5, 'z')
 
     assert.deepEqual(piece.shape, [
       [1, 1, 0],
@@ -318,7 +318,7 @@ test.group('Piece rotation', () => {
     ])
   })
   test('Reverse Z rotation works properly', async ({ assert }) => {
-    const piece = new Piece(1, 5, 5, 'reverse_z')
+    const piece = new PieceService(1, 5, 5, 'reverse_z')
 
     assert.deepEqual(piece.shape, [
       [0, 1, 1],

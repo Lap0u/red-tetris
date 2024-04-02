@@ -25,7 +25,6 @@ const GamePage = ({ user }: { user: User }) => {
   const [othersGrid, setOthersGrid] = useState<userGameGrid[]>([]);
   const [isWinner, setIsWinner] = useState<boolean>(false);
   useEffect(() => {
-    console.log(open, isWinner);
     const handleGameEnd = ({
       userId,
       score,
@@ -51,7 +50,6 @@ const GamePage = ({ user }: { user: User }) => {
       username: string;
       invisible: boolean;
     }) => {
-      console.log('invinsible', invisible, username);
       if (user?.id === playerId) {
         setGrid(() => {
           const newGrid = { username, grid: completeGrid, playerDead: false };
@@ -82,11 +80,9 @@ const GamePage = ({ user }: { user: User }) => {
       username: string;
       score: number;
     }) => {
-      console.log('someoneDied', user?.username, username);
       if (user?.username === username) {
         setGrid((prev) => {
           const newGame = { ...prev, playerDead: true };
-          console.log('newGame', newGame);
           return newGame;
         });
         setPlayerScore(score);
@@ -122,7 +118,6 @@ const GamePage = ({ user }: { user: User }) => {
     // Function to handle keydown events
     const keyDownEvent = (event: KeyboardEvent) => {
       const response = { room: gameId, userId: user?.id, key: event.code };
-      console.log('response', response);
       socket.emit('keyPress', response);
     };
 
@@ -141,6 +136,7 @@ const GamePage = ({ user }: { user: User }) => {
 
   return (
     <div>
+      <h1 className="text-center text-4xl text-white">Game</h1>
       <div
         ref={gameAreaRef} // Use the ref here
         className="w-full h-full flex justify-center items-center gap-x-8"

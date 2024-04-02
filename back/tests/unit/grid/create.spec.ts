@@ -1,11 +1,11 @@
 import Grid from '#models/grid'
-import Piece from '#models/piece'
+import PieceService from '#services/piece_service'
 import { test } from '@japa/runner'
 
 test('Grid is properly constructed', async ({ assert }) => {
   let pieceList = []
   for (let i = 0; i < 5; i++) {
-    pieceList.push(new Piece(1, 0, 0, 'line'))
+    pieceList.push(new PieceService(1, 0, 0, 'line'))
   }
   const grid = new Grid()
   assert.equal(grid.width, 10)
