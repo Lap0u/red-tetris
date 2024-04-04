@@ -99,13 +99,22 @@ const GamePage = ({ user }: { user: User }) => {
         });
       }
     };
+    const handleIndestructibleSent = ({
+      nbIndestructible,
+    }: {
+      nbIndestructible: number;
+    }) => {
+      socket.emit('setIndestructible', { nbIndestructible });
+    }
     socket.on('gameEnd', handleGameEnd);
     socket.on('myNewGrid', handleNewGrid);
     socket.on('playerDead', handlePlayerDead);
+    socket.on('indestructibleSent', handleIndestructibleSent);
     return () => {
       socket.off('myNewGrid', handleNewGrid);
       socket.off('playerDead', handlePlayerDead);
       socket.off('gameEnd', handleGameEnd);
+      socket.off('indestructibleSent', handleIndestructibleSent);
     };
   }, [othersGrid, user?.id, user?.username]);
 

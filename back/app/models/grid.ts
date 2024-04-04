@@ -55,12 +55,11 @@ export default class Grid extends BaseModel {
   public checkIfNextCellMoveIsValid(y: number, x: number, i: number, j: number) {
     return this.grid[y + i][x + j] !== 0
   }
-  public async setPiecesList(piecesList: PieceService[]) {
+  public setPiecesList(piecesList: PieceService[]) {
     this.piecesList = [...piecesList]
     for (let piece of this.piecesList) {
       piece.addGrid(this)
     }
-    await this.save()
   }
   public isFree(x: number, y: number) {
     return this.grid[y][x] === 0
@@ -71,7 +70,7 @@ export default class Grid extends BaseModel {
   public checkLines() {
     const lines = []
     for (let i = 0; i < this.height; i++) {
-      if (this.grid[i].every((cell) => cell !== 0)) {
+      if (this.grid[i].every((cell) => (cell !== 0 && cell !== 9))) {
         lines.push(i)
       }
     }
@@ -131,6 +130,14 @@ export default class Grid extends BaseModel {
     return currentPiece
   }
 
+  private handleSetIndestructible(nbIndestructible: number) {
+    if (nbIndestructible <= 0) return
+    for (let i = 0; i < nbIndestructible - 1; i++) {
+      this.grid.shift()
+      this.grid.push(new Array(this.width).fill(9))
+    }
+  }
+
   public gameLoop(
     socket: Socket,
     roomId: string,
@@ -144,6 +151,10 @@ export default class Grid extends BaseModel {
     socket.on('keyPress', (data) => {
       console.log('keypress grid', data)
       this.currentPiece?.movePiece(data.key)
+    })
+    socket.on('setIndestructible', (data) => {
+      if (data.nbIndestructible <= 1) return
+      this.handleSetIndestructible(data.nbIndestructible)
     })
     const id = setInterval(() => {
       Game.findOrFail(roomId).then((game) => {
@@ -185,6 +196,8 @@ export default class Grid extends BaseModel {
         }
         if (lines.length > 0) {
           this.removeLines(lines)
+          socket.to(roomId).emit('indestructibleSent',{ nbIndestructible: lines.length }
+          )
         }
         // If the piceceList is empty, the game is over
         if (this.currentPiece === undefined) {

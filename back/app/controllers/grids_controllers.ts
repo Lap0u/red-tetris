@@ -24,7 +24,7 @@ export default class GridsController {
       for (const grid of grids) {
         const user = await User.findOrFail(grid.userId)
         user.related('grid').save(grid)
-        await grid.setPiecesList(piecesList)
+        grid.setPiecesList(piecesList)
       }
       return response.json(grids)
     } catch (error) {

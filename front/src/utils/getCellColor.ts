@@ -16,6 +16,8 @@ export const getCellColor = (cell: number) => {
       return 'bg-[#00FF00]';
     case 8:
       return 'bg-[#FF00FF]';
+    case 9:
+      return 'bg-gradient-to-br from-[#FF00FF] via-gray-500 to-[#FF00FF]';
     default:
       return 'bg-gray-500';
   }
