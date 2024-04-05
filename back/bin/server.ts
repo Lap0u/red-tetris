@@ -19,6 +19,7 @@ import {
   handleInformGameCreated,
   handlePlayerReady,
   handlePreGameLeave,
+  handleRedirectRestartPlayers,
   handleRoomJoin,
   handleRoomLeave,
 } from '#controllers/sockets_controller'
@@ -70,6 +71,9 @@ io.on('connection', (socket) => {
   })
   socket.on('informGameCreated', () => {
     handleInformGameCreated(socket)
+  })
+  socket.on('redirectRestartPlayers', (data) => {
+    handleRedirectRestartPlayers(socket, data.gameId)
   })
 })
 
