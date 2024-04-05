@@ -24,12 +24,27 @@ const CurrentGamesList = () => {
     socket.emit('askGetOwners');
     socket.on('getOwners', (ownersIdsNames) => {
       setOwners([...ownersIdsNames]);
-    });
+    })
+    const handleGameCreated = () => {
+      getGames();
+      socket.emit('askGetOwners');
+    }
+    socket.on('gameCreated', handleGameCreated);
+
+    return () => {
+      socket.off('gameCreated', handleGameCreated);
+      socket.off('getOwners');
+    }
   }, []);
 
   const joinGame = (gameId: string) => {
     navigate(`/pregame/${gameId}/${user?.username}`);
   };
+
+  const getOwnerName = (gameUserId: number) => {
+    const ownerIndex = owners.findIndex((owner: User) => owner.id === gameUserId);
+    return owners[ownerIndex]?.username;
+  }
 
   return (
     <>

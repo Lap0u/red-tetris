@@ -16,6 +16,7 @@ import {
   handleGameSpeed,
   handleGameStart,
   handleGetOwners,
+  handleInformGameCreated,
   handlePlayerReady,
   handleRoomJoin,
   handleRoomLeave,
@@ -62,6 +63,9 @@ io.on('connection', (socket) => {
   })
   socket.on('askGetOwners', () => {
     handleGetOwners(socket)
+  })
+  socket.on('informGameCreated', () => {
+    handleInformGameCreated(socket)
   })
 })
 

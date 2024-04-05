@@ -19,6 +19,7 @@ const PregamePage = ({ user }: { user: User }) => {
   useCheckGameId();
 
   useEffect(() => {
+    socket.emit('informGameCreated');
     socket.on('gameSpeed', (gameSpeed) => {
       setGameSpeed(gameSpeed);
     });

@@ -106,7 +106,7 @@ export const handleGameSpeed = async (
 
 export const handleGetOwners = async (socket: Socket) => {
   const gameOwners = await User.query().has('ownedGames')
-  const ownerIdsNames = gameOwners.map((owner) => {
+  const ownerIdsNames = gameOwners.map((owner: User) => {
     return { id: owner.id, username: owner.username }
   })
   socket.emit('getOwners', ownerIdsNames)
@@ -142,4 +142,8 @@ export const handleEndGame = async (socket: Socket, roomId: string, userId: numb
     game.status = 'finished'
     await game.save()
   }
+}
+
+export const handleInformGameCreated = async (socket: Socket) => {
+  socket.local.emit('gameCreated')
 }
