@@ -26,7 +26,7 @@ describe('GamePage', () => {
     render(
       <Provider store={store}>
         <BrowserRouter>
-          <GamePage />
+          <GamePage user={{ id: 1, username: 'lol' }} />
         </BrowserRouter>
       </Provider>
     );

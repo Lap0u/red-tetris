@@ -1,26 +1,32 @@
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import getGame from '../fetch/getGame';
 
-const useCheckGameId = () => {
-    const { gameId } = useParams();
-    const navigate = useNavigate();
+const useCheckGameId = (user: string) => {
+  const { gameId, username } = useParams();
+  const navigate = useNavigate();
 
-    useEffect(() => {
+  useEffect(() => {
     const checkGameId = async () => {
       if (!gameId) {
         navigate('/lobby');
         return;
       }
-      const game = await getGame(gameId);
-      if (!game) {
+      if (user !== username) {
+        navigate('/busy');
+        return;
+      }
+
+      const { id, status } = await getGame(gameId);
+      if (!id) {
         navigate('/lobby');
+      }
+      if (status === 'finished') {
+        navigate('/busy');
       }
     };
     checkGameId();
-  }, [gameId, navigate]);
+  }, [gameId, navigate, user, username]);
+};
 
-  return ;
-}
-
-export default useCheckGameId
+export default useCheckGameId;

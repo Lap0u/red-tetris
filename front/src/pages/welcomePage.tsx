@@ -30,10 +30,7 @@ const WelcomePage = ({ user }: { user: User | null }) => {
     const user = await createUser(username, socket.id);
     console.log('user', user);
     if (!user) {
-      return;
-    }
-    if (user.message) {
-      toast.error(user.message, {
+      toast.error('User already exists', {
         toastId: 'username-exists',
         position: 'top-right',
         autoClose: 5000,

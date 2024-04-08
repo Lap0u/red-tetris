@@ -10,15 +10,17 @@ import CustomizeGameSpeed from '../components/CustomizeGameSpeed';
 import createGrids from '../fetch/createGrids';
 
 const PregamePage = ({ user }: { user: User }) => {
-  const { gameId } = useParams();
+  const { gameId, username } = useParams();
   const navigate = useNavigate();
   const [players, setPlayers] = useState<User[]>([]);
   const [notGameOwner, setNotGameOwner] = useState(false);
   const [gameSpeed, setGameSpeed] =
     useState<AvailableGameSpeed>('intermediate');
-  useCheckGameId();
-
+  useCheckGameId(user.username);
   useEffect(() => {
+    if (user.username !== username) {
+      navigate('/lobby');
+    }
     socket.emit('informGameCreated');
     socket.on('gameSpeed', (gameSpeed) => {
       setGameSpeed(gameSpeed);
@@ -32,6 +34,12 @@ const PregamePage = ({ user }: { user: User }) => {
     socket.on(`playerJoined`, (players) => {
       setPlayers(players);
     });
+    socket.on(`playerLeftRoom`, (playerId) => {
+      setPlayers((prev) => prev.filter((player) => player.id !== playerId));
+    });
+    socket.on('playerLeftPreGame', (playerId) => {
+      setPlayers((prev) => prev.filter((player) => player.id !== playerId));
+    });
     socket.on(`roomFull`, () => {
       alert('Room is full');
       navigate('/lobby');
@@ -40,7 +48,16 @@ const PregamePage = ({ user }: { user: User }) => {
       setNotGameOwner(true);
     });
     socket.emit('joinRoom', { room: gameId, userId: user.id });
-  }, [gameId, navigate, user.username, user.id]);
+    return () => {
+      socket.off('gameSpeed');
+      socket.off('gameStarted');
+      socket.off('gameStart');
+      socket.off('playerJoined');
+      socket.off('playerLeftRoom');
+      socket.off('roomFull');
+      socket.off('notOwner');
+    };
+  }, [gameId, navigate, user.username, user.id, username]);
   const startGame = async () => {
     await createGrids(gameId).then(() => {
       socket.emit('askGameStart', { room: gameId, userId: user.id, gameSpeed });

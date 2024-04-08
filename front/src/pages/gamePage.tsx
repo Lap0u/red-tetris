@@ -15,7 +15,7 @@ const GamePage = ({ user }: { user: User }) => {
   const [open, setOpen] = useState(false);
   const [playerScore, setPlayerScore] = useState<number>(0);
   const handleClose = () => setOpen(false);
-  useCheckGameId();
+  useCheckGameId(user.username);
 
   const [grid, setGrid] = useState<userGameGrid>({
     username: '',
@@ -101,7 +101,7 @@ const GamePage = ({ user }: { user: User }) => {
       nbIndestructible: number;
     }) => {
       socket.emit('setIndestructible', { nbIndestructible });
-    }
+    };
     socket.on('gameEnd', handleGameEnd);
     socket.on('myNewGrid', handleNewGrid);
     socket.on('playerDead', handlePlayerDead);

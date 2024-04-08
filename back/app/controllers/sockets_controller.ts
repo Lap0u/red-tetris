@@ -15,25 +15,47 @@ const gameSpeed = {
 }
 
 export const handleRoomJoin = async (socket: Socket, roomId: string, userId: number) => {
-  const game = await Game.findOrFail(roomId)
-  game.status = 'waiting'
-  await game.save()
-  const user = await User.findOrFail(userId)
-  await user.related('games').save(game)
-  const players = await game.related('users').query()
-  if (players.length === 4) {
-    socket.emit('roomFull')
-    return
+  try {
+    const game = await Game.findOrFail(roomId)
+    console.log('game', game)
+    game.status = 'waiting'
+    await game.save()
+    const user = await User.findOrFail(userId)
+    await user.related('games').save(game)
+    const players = await game.related('users').query()
+    if (players.length === 4) {
+      socket.emit('roomFull')
+      return
+    }
+    if (game.userId !== userId) {
+      socket.emit('notOwner')
+    }
+    socket.join(roomId)
+    socket.to(roomId).emit('playerJoined', players)
+    socket.emit('playerJoined', players)
+  } catch (error) {
+    console.error('Error while joining room', error)
   }
-  if (game.userId !== userId) {
-    socket.emit('notOwner')
-  }
-  socket.join(roomId)
-  socket.to(roomId).emit('playerJoined', players)
-  socket.emit('playerJoined', players)
 }
 
-export const handleRoomLeave = async (userId: number) => {
+export const handlePreGameLeave = async (socket: Socket, data: { userId: number }) => {
+  const user = await User.findOrFail(data.userId)
+  const games = await user.related('games').query()
+  if (!games) return
+  for (const game of games) {
+    await user.related('games').detach([game.id])
+    const players = await game.related('users').query()
+    if (players.length === 0) {
+      game.status = 'finished'
+      await game.save()
+      return
+    }
+    console.log('emit', data.userId)
+    socket.local.emit('playerLeftPreGame', data.userId)
+  }
+}
+
+export const handleRoomLeave = async (socket: Socket, userId: number) => {
   console.log('socket', userId)
   const user = await User.findOrFail(userId)
   const games = await user.related('games').query()
@@ -45,7 +67,9 @@ export const handleRoomLeave = async (userId: number) => {
     if (players.length === 0) {
       game.status = 'finished'
       await game.save()
+      return
     }
+    socket.local.emit('playerLeftRoom', userId)
   }
 }
 export const handlePlayerReady = async (

@@ -18,6 +18,7 @@ import {
   handleGetOwners,
   handleInformGameCreated,
   handlePlayerReady,
+  handlePreGameLeave,
   handleRoomJoin,
   handleRoomLeave,
 } from '#controllers/sockets_controller'
@@ -45,11 +46,14 @@ io.on('connection', (socket) => {
   socket.on('playerReady', (data) => {
     handlePlayerReady(socket, data)
   })
+  socket.on('leaveGame', (data) => {
+    handlePreGameLeave(socket, data)
+  })
   socket.on('disconnect', () => {
     // Now you can use the userId that was associated with this socket
     if (userId) {
       console.log(`User ${userId} disconnected`)
-      handleRoomLeave(userId) // Adjust handleRoomLeave to use userId
+      handleRoomLeave(socket, userId)
     } else {
       console.log('Unknown user disconnected')
     }
@@ -83,6 +87,7 @@ const IMPORTER = (filePath: string) => {
   if (filePath.startsWith('./') || filePath.startsWith('../')) {
     return import(new URL(filePath, APP_ROOT).href)
   }
+  room: string
   return import(filePath)
 }
 
