@@ -31,7 +31,6 @@ describe('LobbyPage', () => {
       </Provider>
     );
 
-    console.error(screen, 'screen', screen.debug());
     expect(screen.getByText('Create Game')).toBeTruthy();
   });
 });

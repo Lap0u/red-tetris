@@ -1,5 +1,6 @@
 import { socket } from '../App';
 import { AvailableGameSpeed } from '../dto/AvailableGameSpeed';
+import { handleGameSpeed } from '../utils/handleGameSpeed';
 
 type CustomizeGameSpeedProps = {
   gameSpeed: AvailableGameSpeed;
@@ -12,18 +13,10 @@ const CustomizeGameSpeed = ({
   gameId,
   userId,
 }: CustomizeGameSpeedProps) => {
-  const handleGameSpeed = (gameSpeed: AvailableGameSpeed) => {
-    console.log('test', gameSpeed, gameId, userId);
-    socket.emit('askSetGameSpeed', {
-      room: gameId,
-      userId: userId,
-      gameSpeed,
-    });
-  };
   return (
     <div className="flex flex-col gap-y-12 justify-center items-center">
       <div
-        onClick={() => handleGameSpeed('beginner')}
+        onClick={() => handleGameSpeed(socket, gameId, userId, 'beginner')}
         className={
           gameSpeed === 'beginner'
             ? 'p-4 bg-pink-300 hover:cursor-pointer rounded-xl'
@@ -32,7 +25,7 @@ const CustomizeGameSpeed = ({
         Beginner
       </div>
       <div
-        onClick={() => handleGameSpeed('intermediate')}
+        onClick={() => handleGameSpeed(socket, gameId, userId, 'intermediate')}
         className={
           gameSpeed === 'intermediate'
             ? 'p-4 bg-pink-300 hover:cursor-pointer rounded-xl'
@@ -41,7 +34,7 @@ const CustomizeGameSpeed = ({
         Intermediate
       </div>
       <div
-        onClick={() => handleGameSpeed('expert')}
+        onClick={() => handleGameSpeed(socket, gameId, userId, 'expert')}
         className={
           gameSpeed === 'expert'
             ? 'p-4 bg-pink-300 hover:cursor-pointer rounded-xl'
@@ -50,7 +43,7 @@ const CustomizeGameSpeed = ({
         Expert
       </div>
       <div
-        onClick={() => handleGameSpeed('le X')}
+        onClick={() => handleGameSpeed(socket, gameId, userId, 'le X')}
         className={
           gameSpeed === 'le X'
             ? 'p-4 bg-pink-300 hover:cursor-pointer rounded-xl'

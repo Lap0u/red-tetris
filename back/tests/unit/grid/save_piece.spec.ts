@@ -1,11 +1,11 @@
 import Grid from '#models/grid'
-import Piece from '#models/piece'
+import PieceService from '#services/piece_service'
 import { test } from '@japa/runner'
 
 test.group('Grid save piece', () => {
   test('Line is correctly saved', async ({ assert }) => {
     const grid = new Grid([])
-    const line = new Piece(1, 0, 0, 'line')
+    const line = new PieceService(1, 0, 0, 'line')
     grid.savePieceToGrid(line)
     assert.deepEqual(grid.grid, [
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -32,7 +32,7 @@ test.group('Grid save piece', () => {
   })
   test('Square is correctly saved', async ({ assert }) => {
     const grid = new Grid([])
-    const square = new Piece(1, 0, 0, 'square')
+    const square = new PieceService(1, 0, 0, 'square')
     grid.savePieceToGrid(square)
     assert.deepEqual(grid.grid, [
       [0, 8, 8, 0, 0, 0, 0, 0, 0, 0],
@@ -59,7 +59,7 @@ test.group('Grid save piece', () => {
   })
   test('L is correctly saved', async ({ assert }) => {
     const grid = new Grid([])
-    const l = new Piece(1, 0, 0, 'l')
+    const l = new PieceService(1, 0, 0, 'l')
     grid.savePieceToGrid(l)
     assert.deepEqual(grid.grid, [
       [8, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -86,7 +86,7 @@ test.group('Grid save piece', () => {
   })
   test('Reverse L is correctly saved', async ({ assert }) => {
     const grid = new Grid([])
-    const reverse_l = new Piece(1, 0, 0, 'reverse_l')
+    const reverse_l = new PieceService(1, 0, 0, 'reverse_l')
     grid.savePieceToGrid(reverse_l)
     assert.deepEqual(grid.grid, [
       [0, 0, 8, 0, 0, 0, 0, 0, 0, 0],
@@ -113,7 +113,7 @@ test.group('Grid save piece', () => {
   })
   test('Z is correctly saved', async ({ assert }) => {
     const grid = new Grid([])
-    const z = new Piece(1, 0, 0, 'z')
+    const z = new PieceService(1, 0, 0, 'z')
     grid.savePieceToGrid(z)
     assert.deepEqual(grid.grid, [
       [8, 8, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -140,7 +140,7 @@ test.group('Grid save piece', () => {
   })
   test('Reverse Z is correctly saved', async ({ assert }) => {
     const grid = new Grid([])
-    const reverse_z = new Piece(1, 0, 0, 'reverse_z')
+    const reverse_z = new PieceService(1, 0, 0, 'reverse_z')
     grid.savePieceToGrid(reverse_z)
     assert.deepEqual(grid.grid, [
       [0, 8, 8, 0, 0, 0, 0, 0, 0, 0],
@@ -167,7 +167,7 @@ test.group('Grid save piece', () => {
   })
   test('T is correctly saved', async ({ assert }) => {
     const grid = new Grid([])
-    const t = new Piece(1, 0, 0, 't')
+    const t = new PieceService(1, 0, 0, 't')
     grid.savePieceToGrid(t)
     assert.deepEqual(grid.grid, [
       [0, 8, 0, 0, 0, 0, 0, 0, 0, 0],

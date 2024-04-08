@@ -84,19 +84,12 @@ export default class PieceService {
     }
   }
   movePiece(key: keyStroke) {
-    console.log('movePiece', key)
     switch (key) {
       case 'ArrowLeft':
         this.move('left')
         break
-      case 'KeyA':
-        this.rotate('left')
-        break
       case 'ArrowRight':
         this.move('right')
-        break
-      case 'KeyD':
-        this.rotate('right')
         break
       case 'ArrowDown':
         this.move('down')
@@ -105,7 +98,7 @@ export default class PieceService {
         this.move('fall')
         break
       case 'ArrowUp':
-        this.move('fall')
+        this.rotate('right')
         break
     }
   }
@@ -154,7 +147,6 @@ export default class PieceService {
     return true
   }
   rotate(rotation: RotateType) {
-    console.log('rotate', rotation)
     if (this.type === 'square') return
     if (rotation === 'left') this.#rotateMatrixLeft()
     if (rotation === 'right') this.#rotateMatrixRight()

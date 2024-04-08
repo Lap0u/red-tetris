@@ -122,7 +122,7 @@ export default class Grid extends BaseModel {
     return completeGrid
   }
 
-  private allocateCurrentPiece() {
+  public allocateCurrentPiece() {
     const nextPiece = this.piecesList.shift()
     if (nextPiece === undefined) return undefined
     const currentPiece = new PieceService(nextPiece.id, nextPiece.x, nextPiece.y, nextPiece.type)

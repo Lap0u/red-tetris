@@ -20,7 +20,6 @@ const PregamePage = ({ user }: { user: User }) => {
 
   useEffect(() => {
     socket.on('gameSpeed', (gameSpeed) => {
-      console.log('tttttt', gameSpeed);
       setGameSpeed(gameSpeed);
     });
     socket.on('gameStarted', () => {
