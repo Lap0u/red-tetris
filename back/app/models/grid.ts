@@ -36,6 +36,7 @@ export default class Grid extends BaseModel {
   gameStatus: 'waiting' | 'pending' | 'ended'
   grid: number[][]
   currentPiece: PieceService | undefined
+  scoreMap: { [key: number]: number }
 
   constructor() {
     super()
@@ -43,6 +44,12 @@ export default class Grid extends BaseModel {
     this.height = env.get('GRID_HEIGHT')
     this.gameStatus = 'waiting'
     this.grid = Array.from(Array(this.height), () => new Array(this.width).fill(0))
+    this.scoreMap = {
+      1: 100,
+      2: 250,
+      3: 500,
+      4: 1000,
+    }
     for (let i = 0; i < this.width; i++) {
       this.grid[i] = []
       for (let j = 0; j < this.width; j++) {
@@ -70,7 +77,7 @@ export default class Grid extends BaseModel {
   public checkLines() {
     const lines = []
     for (let i = 0; i < this.height; i++) {
-      if (this.grid[i].every((cell) => (cell !== 0 && cell !== 9))) {
+      if (this.grid[i].every((cell) => cell !== 0 && cell !== 9)) {
         lines.push(i)
       }
     }
@@ -149,7 +156,6 @@ export default class Grid extends BaseModel {
     let invisible = false
     let invisibleDelay = 0
     socket.on('keyPress', (data) => {
-      console.log('keypress grid', data)
       this.currentPiece?.movePiece(data.key)
     })
     socket.on('setIndestructible', (data) => {
@@ -182,22 +188,22 @@ export default class Grid extends BaseModel {
       }
       // If there is no current piece, we take the next one from the list and check if lines should be removed
       if (this.currentPiece === undefined) {
-        // ** On fake le score en attendant d'avoir des mouvements fonctionnels **
-        Grid.findByOrFail('userId', playerId).then((grid) => {
-          grid.score += 200 + Math.floor(Math.random() * 100)
-          grid.save()
-        })
         this.currentPiece = this.allocateCurrentPiece()
         const lines = this.checkLines()
+        // ** On fake le score en attendant d'avoir des mouvements fonctionnels **
         if (lines.length >= 4) {
           console.log('invisible', lines.length)
           invisible = true
           invisibleDelay = 25 // 25 * 200ms = 5s (pour la vitesse par défaut)
         }
         if (lines.length > 0) {
+          console.log('lines', lines.length, this.scoreMap[lines.length])
+          Grid.findByOrFail('userId', playerId).then((grid) => {
+            grid.score += this.scoreMap[lines.length]
+            grid.save()
+          })
           this.removeLines(lines)
-          socket.to(roomId).emit('indestructibleSent',{ nbIndestructible: lines.length }
-          )
+          socket.to(roomId).emit('indestructibleSent', { nbIndestructible: lines.length })
         }
         // If the piceceList is empty, the game is over
         if (this.currentPiece === undefined) {

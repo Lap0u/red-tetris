@@ -2,7 +2,6 @@ import Game from '#models/game'
 import Grid from '#models/grid'
 import Score from '#models/score'
 import User from '#models/user'
-import { keyStroke } from '#services/piece_service'
 import { Socket } from 'socket.io'
 
 type AvailableGameSpeed = 'beginner' | 'intermediate' | 'expert' | 'le X'
@@ -17,7 +16,6 @@ const gameSpeed = {
 export const handleRoomJoin = async (socket: Socket, roomId: string, userId: number) => {
   try {
     const game = await Game.findOrFail(roomId)
-    console.log('game', game)
     game.status = 'waiting'
     await game.save()
     const user = await User.findOrFail(userId)
@@ -77,7 +75,8 @@ export const handlePlayerReady = async (
   data: { room: string; userId: number; gameSpeed: AvailableGameSpeed }
 ) => {
   const player = await User.findOrFail(data.userId)
-  const grid = await Grid.findByOrFail('userId', data.userId)
+  const playerGrids = await Grid.query().where('userId', player.id)
+  const grid = playerGrids[playerGrids.length - 1]
   player.isDead = false
   await player.save()
   if (!grid) {
@@ -110,7 +109,8 @@ export const handleGameStart = async (
   const players = await game.related('users').query()
 
   for (const player of players) {
-    const curGrid = await Grid.findByOrFail('userId', player.id)
+    const playerGrids = await Grid.query().where('userId', player.id)
+    const curGrid = playerGrids[playerGrids.length - 1]
     curGrid.speed = gameSpeed[data.gameSpeed]
     await curGrid.save()
   }
@@ -143,6 +143,7 @@ const savePlayerEndGameAndReturnScore = async (curUser: User, socket: Socket) =>
   await lastPlayerGrid.save()
   const score = { username: username, score: lastPlayerGrid.score }
   socket.emit('gameEnd', { userId: curUser.id, score: score.score })
+  await Grid.query().where('userId', id).delete()
   return score
 }
 

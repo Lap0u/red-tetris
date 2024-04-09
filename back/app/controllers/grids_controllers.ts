@@ -20,11 +20,11 @@ export default class GridsController {
     })
     try {
       const grids = await Grid.createMany(gridData)
-
+      console.log('create grids', grids)
       for (const grid of grids) {
         const user = await User.findOrFail(grid.userId)
-        user.related('grid').save(grid)
         grid.setPiecesList(piecesList)
+        user.related('grid').save(grid)
       }
       return response.json(grids)
     } catch (error) {
