@@ -13,6 +13,8 @@ import getUser from './fetch/getUser';
 import PregamePage from './pages/pregamePage';
 import { User } from './dto/User';
 import Highscore from './pages/highscorePage';
+import NotFoundPage from './pages/404';
+import BusyGame from './pages/BusyGame';
 
 export const socket = io('http://localhost:3334');
 const App = () => {
@@ -76,6 +78,15 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/busy"
+          element={
+            <ProtectedRoute isAuthLoading={isAuthLoading} user={user}>
+              <BusyGame />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );

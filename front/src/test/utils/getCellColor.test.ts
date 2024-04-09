@@ -12,7 +12,7 @@ describe('getCellColor', () => {
       'bg-[#FF0000]',
       'bg-[#00FF00]',
       'bg-[#FF00FF]',
-      'bg-gray-500',
+      'bg-gradient-to-br from-[#FF00FF] via-gray-500 to-[#FF00FF]',
     ];
 
     for (let i = 1; i <= 9; i++) {

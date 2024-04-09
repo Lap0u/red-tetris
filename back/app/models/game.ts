@@ -27,7 +27,7 @@ export default class Game extends BaseModel {
   public generatePiecesList() {
     const pieceTypes: PieceType[] = ['line', 'square', 'l', 'reverse_l', 't', 'z', 'reverse_z'] // Array of possible piece types
     const piecesList: PieceService[] = []
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 1000; i++) {
       const randomTypeIndex = Math.floor(Math.random() * pieceTypes.length) // Generate a random index
       const randomType = pieceTypes[randomTypeIndex] // Use the random index to select a piece type
       const piece = new PieceService(randomTypeIndex + 1, 5, 0, randomType) // Create a piece with the random type

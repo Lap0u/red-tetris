@@ -3,8 +3,8 @@ import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from '../../store/store';
-import Lobby from '../../pages/lobbyPage';
 import { act } from 'react-dom/test-utils';
+import NotFoundPage from '../../pages/404';
 
 vi.mock('../fetch/getGame', () => ({
   __esModule: true,
@@ -18,33 +18,32 @@ vi.mock('../App', () => ({
   },
 }));
 
-describe('LobbyPage', () => {
+describe('404', () => {
   afterEach(() => {
     vi.clearAllMocks();
   });
 
-  it('renders and shows the Create Game button', () => {
+  it('renders the 404 page', () => {
     render(
       <Provider store={store}>
         <BrowserRouter>
-          <Lobby user={{ id: 1, username: 'lol' }} />
+          <NotFoundPage />
         </BrowserRouter>
       </Provider>
     );
 
-    expect(screen.getByText('Create Game')).toBeTruthy();
+    expect(screen.getByText('Page Not Found')).toBeTruthy();
   });
-  it('Changes location when clicking the create game button', () => {
+  it('navigates to homepage when button is clicked', () => {
     const { getByText } = render(
       <Provider store={store}>
         <BrowserRouter>
-          <Lobby user={{ id: 1, username: 'lol' }} />
+          <NotFoundPage />
         </BrowserRouter>
       </Provider>
     );
-
     act(() => {
-      const button = getByText('Create Game');
+      const button = getByText('Return to homepage');
       button.click();
     });
     // Assert whether the navigation has occurred
