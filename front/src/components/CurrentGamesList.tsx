@@ -37,6 +37,7 @@ const CurrentGamesList = () => {
   }, []);
 
   const joinGame = (gameId: string) => {
+    socket.emit('joinRoom', { room: gameId, userId: user?.id });
     navigate(`/pregame/${gameId}/${user?.username}`);
   };
 

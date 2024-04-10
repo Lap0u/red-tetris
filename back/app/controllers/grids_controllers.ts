@@ -19,6 +19,9 @@ export default class GridsController {
       }
     })
     try {
+      for (const player of players) {
+        await Grid.query().where('user_id', player.id).delete()
+      }
       const grids = await Grid.createMany(gridData)
       console.log('create grids', grids)
       for (const grid of grids) {

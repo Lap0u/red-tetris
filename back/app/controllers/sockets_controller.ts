@@ -21,6 +21,7 @@ export const handleRoomJoin = async (socket: Socket, roomId: string, userId: num
     const user = await User.findOrFail(userId)
     await user.related('games').save(game)
     const players = await game.related('users').query()
+    console.log('players length', players.length)
     if (players.length === 4) {
       socket.emit('roomFull')
       return

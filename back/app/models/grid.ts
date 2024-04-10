@@ -165,7 +165,7 @@ export default class Grid extends BaseModel {
     const id = setInterval(() => {
       Game.findOrFail(roomId).then((game) => {
         //check if the game has ended (updated by handleEndGame in db)
-        if (game.status === 'finished') {
+        if (game.status !== 'playing') {
           this.gameStatus = 'ended'
           clearInterval(id)
           return

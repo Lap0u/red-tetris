@@ -10,6 +10,7 @@ const Lobby = ({ user }: { user: User }) => {
   const navigate = useNavigate();
   const handleCreateGame = async () => {
     const gameId = await createGame(user.id);
+    socket.emit('joinRoom', { room: gameId, userId: user?.id });
     navigate(`/pregame/${gameId}/${user.username}`);
   };
   useEffect(() => {

@@ -47,7 +47,7 @@ const PregamePage = ({ user }: { user: User }) => {
     socket.on(`gameOwner`, () => {
       setGameOwner(true);
     });
-    socket.emit('joinRoom', { room: gameId, userId: user.id });
+    // socket.emit('joinRoom', { room: gameId, userId: user.id });
     return () => {
       socket.off('gameSpeed');
       socket.off('gameStarted');

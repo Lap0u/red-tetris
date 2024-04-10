@@ -24,12 +24,16 @@ const EndGameModal: React.FC<EndGameModalProps> = ({
   const handleRestart = async () => {
     if (!owner) return;
     createGame(owner.id).then((newGameId) => {
+      socket.emit('joinRoom', { room: newGameId, userId: user?.id });
+
       socket.emit('redirectRestartPlayers', { oldGameId, newGameId });
       navigate(`/pregame/${newGameId}/${user.username}`);
     });
   };
   const handleRedirectRestart = (newGameId: string) => {
     console.log('redirecting to new game', newGameId);
+    socket.emit('joinRoom', { room: newGameId, userId: user?.id });
+
     navigate(`/pregame/${newGameId}/${user.username}`);
   };
 
