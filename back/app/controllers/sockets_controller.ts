@@ -36,6 +36,23 @@ export const handleRoomJoin = async (socket: Socket, roomId: string, userId: num
   }
 }
 
+export const handlePreGameLeave = async (socket: Socket, data: { userId: number }) => {
+  const user = await User.findOrFail(data.userId)
+  const games = await user.related('games').query()
+  if (!games) return
+  for (const game of games) {
+    await user.related('games').detach([game.id])
+    const players = await game.related('users').query()
+    if (players.length === 0) {
+      game.status = 'finished'
+      await game.save()
+      return
+    }
+    console.log('emit', data.userId)
+    socket.local.emit('playerLeftPreGame', data.userId)
+  }
+}
+
 export const handleRoomLeave = async (socket: Socket, userId: number) => {
   console.log('socket', userId)
   const user = await User.findOrFail(userId)
