@@ -25,10 +25,8 @@ const App = () => {
     const checkUser = async () => {
       setIsAuthLoading(true);
       const userCookie = Cookies.get('userId');
-      console.log('userCookie', userCookie);
       if (userCookie) {
         const user = await getUser(userCookie);
-        console.log('user', user);
         if (!user) {
           Cookies.remove('userId');
           setIsAuthLoading(false);

@@ -49,13 +49,11 @@ export const handlePreGameLeave = async (socket: Socket, data: { userId: number 
       await game.save()
       return
     }
-    console.log('emit', data.userId)
     socket.local.emit('playerLeftPreGame', data.userId)
   }
 }
 
 export const handleRoomLeave = async (socket: Socket, userId: number) => {
-  console.log('socket', userId)
   const user = await User.findOrFail(userId)
   const games = await user.related('games').query()
   if (!games) return

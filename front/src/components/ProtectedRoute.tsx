@@ -12,7 +12,6 @@ const ProtectedRoute = ({
   user,
   children,
 }: ProtectedRouteProps) => {
-  console.log('pr', user);
   if (isAuthLoading) {
     return <div>Loading...</div>;
   }

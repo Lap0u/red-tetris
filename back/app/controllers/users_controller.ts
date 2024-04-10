@@ -4,7 +4,6 @@ import { HttpContext } from '@adonisjs/core/http'
 export default class UsersController {
   async create({ request, response }: HttpContext) {
     const { username, socketId } = request.all()
-    console.log('create', username, socketId)
     const userExists = await User.findBy('username', username)
     if (userExists) {
       return response.status(409).json({ message: 'Username already exists' })
@@ -15,7 +14,6 @@ export default class UsersController {
 
   async remove({ request, response }: HttpContext) {
     const { socketId } = request.all()
-    console.log('remove', socketId)
     const user = await User.findByOrFail('socket_id', socketId)
     if (user.socket_id !== socketId) return
     const games = await user.related('games').query()
@@ -33,7 +31,6 @@ export default class UsersController {
 
   async get({ response, params }: HttpContext) {
     const { id } = params
-    console.log('first', id)
     const user = await User.find(id)
     return response.json(user)
   }
