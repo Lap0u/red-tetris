@@ -130,11 +130,12 @@ export default class PieceService {
     }
   }
 
-  #isMovePossible() {
+  #isMovePossible(newShape?: number[][]) {
+    if (!newShape) newShape = this.shape
     if (!this.grid) return false
-    for (let i = 0; i < this.shape.length; i++) {
-      for (let j = 0; j < this.shape[0].length; j++) {
-        if (this.shape[i][j] !== 0) {
+    for (let i = 0; i < newShape.length; i++) {
+      for (let j = 0; j < newShape[0].length; j++) {
+        if (newShape[i][j] !== 0) {
           if (this.x + j < 0 || this.x + j >= this.GRID_WIDTH || this.y + i >= this.GRID_HEIGHT) {
             return false
           }
@@ -152,6 +153,7 @@ export default class PieceService {
     if (rotation === 'right') this.#rotateMatrixRight()
   }
   #rotateMatrixLeft() {
+    console.log('rotating left')
     const rows = this.shape.length
     const cols = this.shape[0].length
     const newMatrix: number[][] = Array.from({ length: cols }, () => [])
@@ -161,12 +163,14 @@ export default class PieceService {
         newMatrix[cols - j - 1][i] = this.shape[i][j]
       }
     }
-    if (!this.#willCollide(newMatrix)) {
+    if (this.#isMovePossible(newMatrix)) {
       this.shape = newMatrix
     }
   }
 
   #rotateMatrixRight() {
+    console.log('rotating right')
+
     const rows = this.shape.length
     const cols = this.shape[0].length
     const newMatrix: number[][] = Array.from({ length: cols }, () => [])
@@ -176,21 +180,9 @@ export default class PieceService {
         newMatrix[j][rows - 1 - i] = this.shape[i][j]
       }
     }
-    if (!this.#willCollide(newMatrix)) {
+    if (this.#isMovePossible(newMatrix)) {
       this.shape = newMatrix
     }
-  }
-  #willCollide(newMatrix: number[][]) {
-    for (let i = 0; i < newMatrix.length; i++) {
-      for (let j = 0; j < newMatrix.length; j++) {
-        if (newMatrix[i][j] !== 0) {
-          if (this.x + j < 0 || this.x + j >= this.GRID_WIDTH || this.y + i >= this.GRID_HEIGHT) {
-            return true
-          }
-        }
-      }
-    }
-    return false
   }
   toJSON() {
     return {

@@ -30,7 +30,7 @@ export default class Game extends BaseModel {
     for (let i = 0; i < 1000; i++) {
       const randomTypeIndex = Math.floor(Math.random() * pieceTypes.length) // Generate a random index
       const randomType = pieceTypes[randomTypeIndex] // Use the random index to select a piece type
-      const piece = new PieceService(randomTypeIndex + 1, 5, 0, randomType) // Create a piece with the random type
+      const piece = new PieceService(randomTypeIndex + 1, 3, 0, randomType) // Create a piece with the random type
       piecesList.push(piece) // Add the piece to the list
     }
     return piecesList
