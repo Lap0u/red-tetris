@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import getGame from '../fetch/getGame';
 
 const useCheckGameId = (user: string) => {
   const { gameId, username } = useParams();
-  const navigate = useNavigate();
+  const location = useLocation();
 
+  const navigate = useNavigate();
   useEffect(() => {
     const checkGameId = async () => {
       if (!gameId) {
@@ -24,9 +25,15 @@ const useCheckGameId = (user: string) => {
       if (status === 'finished') {
         navigate('/busy');
       }
+      if (status === 'waiting' && location.pathname.includes('/game/')) {
+        navigate('/lobby');
+      }
+      if (status === 'playing' && !location.pathname.includes('/game/')) {
+        navigate(`/busy`);
+      }
     };
     checkGameId();
-  }, [gameId, navigate, user, username]);
+  }, [gameId, navigate, user, username, location.pathname]);
 };
 
 export default useCheckGameId;
