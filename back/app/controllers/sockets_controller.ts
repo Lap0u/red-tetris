@@ -25,8 +25,8 @@ export const handleRoomJoin = async (socket: Socket, roomId: string, userId: num
       socket.emit('roomFull')
       return
     }
-    if (game.userId !== userId) {
-      socket.emit('notOwner')
+    if (game.userId === userId) {
+      socket.emit('gameOwner')
     }
     socket.join(roomId)
     socket.to(roomId).emit('playerJoined', players)
@@ -136,13 +136,17 @@ export const handleGetOwners = async (socket: Socket) => {
   socket.emit('getOwners', ownerIdsNames)
 }
 
-const savePlayerEndGameAndReturnScore = async (curUser: User, socket: Socket) => {
+const savePlayerEndGameAndReturnScore = async (
+  curUser: User,
+  socket: Socket,
+  owner: User | undefined
+) => {
   const { id, username } = curUser
   const lastPlayerGrid = await Grid.findByOrFail('userId', id)
   lastPlayerGrid.gameStatus = 'ended'
   await lastPlayerGrid.save()
   const score = { username: username, score: lastPlayerGrid.score }
-  socket.emit('gameEnd', { userId: curUser.id, score: score.score })
+  socket.emit('gameEnd', { userId: curUser.id, score: score.score, owner })
   await Grid.query().where('userId', id).delete()
   return score
 }
@@ -155,12 +159,13 @@ export const handleEndGame = async (socket: Socket, roomId: string, userId: numb
   currPlayer.isDead = true
   await currPlayer.save()
   const playersLeft = players.filter((player) => player.isDead === false)
+  const owner = players.find((player) => player.id === game.userId)
   if (playersLeft.length === 1 || players.length === 1) {
     if (players.length === 1) {
-      await savePlayerEndGameAndReturnScore(players[0], socket)
+      await savePlayerEndGameAndReturnScore(players[0], socket, owner)
       // await Score.create(score)
     } else {
-      const score = await savePlayerEndGameAndReturnScore(playersLeft[0], socket)
+      const score = await savePlayerEndGameAndReturnScore(playersLeft[0], socket, owner)
       socket.to(roomId).emit('gameEnd', { userId: playersLeft[0].id, score: score.score })
       await Score.create(score)
     }
@@ -169,6 +174,15 @@ export const handleEndGame = async (socket: Socket, roomId: string, userId: numb
   }
 }
 
-export const handleInformGameCreated = async (socket: Socket) => {
+export const handleInformGameCreated = (socket: Socket) => {
   socket.local.emit('gameCreated')
+}
+
+export const handleRedirectRestartPlayers = (
+  socket: Socket,
+  oldGameId: string,
+  newGameId: string
+) => {
+  socket.local.emit('gameCreated')
+  socket.to(oldGameId).emit('redirectRestart', newGameId)
 }

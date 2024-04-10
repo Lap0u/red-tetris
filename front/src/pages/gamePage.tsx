@@ -24,18 +24,22 @@ const GamePage = ({ user }: { user: User }) => {
   });
   const [othersGrid, setOthersGrid] = useState<userGameGrid[]>([]);
   const [isWinner, setIsWinner] = useState<boolean>(false);
+  const [owner, setOwner] = useState<User>();
   useEffect(() => {
     const handleGameEnd = ({
       userId,
       score,
+      owner,
     }: {
       userId: number;
       score: number;
+      owner: User;
     }) => {
       if (user.id === userId) {
         setIsWinner(true);
         setPlayerScore(score);
       }
+      setOwner(owner);
       setOpen(true);
     };
 
@@ -148,7 +152,13 @@ const GamePage = ({ user }: { user: User }) => {
       </div>
       <Modal open={open} onClose={handleClose}>
         <div className="flex justify-center items-center h-full bg-gray-900 bg-opacity-75">
-          <EndGameModal isWinner={isWinner} score={playerScore} />
+          <EndGameModal
+            isWinner={isWinner}
+            score={playerScore}
+            owner={owner}
+            user={user}
+            oldGameId={gameId}
+          />
         </div>
       </Modal>
     </div>

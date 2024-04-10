@@ -13,7 +13,7 @@ const PregamePage = ({ user }: { user: User }) => {
   const { gameId, username } = useParams();
   const navigate = useNavigate();
   const [players, setPlayers] = useState<User[]>([]);
-  const [notGameOwner, setNotGameOwner] = useState(false);
+  const [gameOwner, setGameOwner] = useState(false);
   const [gameSpeed, setGameSpeed] =
     useState<AvailableGameSpeed>('intermediate');
   useCheckGameId(user);
@@ -44,8 +44,8 @@ const PregamePage = ({ user }: { user: User }) => {
       alert('Room is full');
       navigate('/lobby');
     });
-    socket.on(`notOwner`, () => {
-      setNotGameOwner(true);
+    socket.on(`gameOwner`, () => {
+      setGameOwner(true);
     });
     socket.emit('joinRoom', { room: gameId, userId: user.id });
     return () => {
@@ -65,7 +65,7 @@ const PregamePage = ({ user }: { user: User }) => {
   };
   return (
     <div className="w-screen h-screen gap-x-32 flex justify-center items-center">
-      {!notGameOwner && (
+      {gameOwner && (
         <CustomizeGameSpeed
           gameSpeed={gameSpeed}
           gameId={gameId}
@@ -75,12 +75,8 @@ const PregamePage = ({ user }: { user: User }) => {
       <div
         className="flex flex-col justify-center items-center
       h-fit gap-y-4">
-        <MyButton
-          onClick={startGame}
-          text="Start Game"
-          disabled={notGameOwner}
-        />
-        {notGameOwner && (
+        <MyButton onClick={startGame} text="Start Game" disabled={!gameOwner} />
+        {!gameOwner && (
           <p className="w-48 text-red-500 text-xs text-center">
             Wait for the game's owner to launch...
           </p>
