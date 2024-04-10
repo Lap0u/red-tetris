@@ -7,20 +7,18 @@ export default class GamesController {
   async create({ request, response }: HttpContext) {
     const { userId } = request.all()
     const user = await User.findOrFail(userId)
+    console.log('create called')
     const game = await Game.create({ status: 'waiting' })
+    console.log('create survived')
     user.related('ownedGames').save(game)
-    user.related('games').save(game)
     return response.json(game)
   }
 
   async get({ params, response }: HttpContext) {
     const { gameId } = params
     const game = await Game.findOrFail(gameId)
-    console.log('game contr', game)
     const players = await game.related('users').query()
-    console.log('players', players)
     const sockets = players.map((player) => player.socket_id)
-    console.log('sockets', sockets)
     return response.json({ game, sockets })
   }
 

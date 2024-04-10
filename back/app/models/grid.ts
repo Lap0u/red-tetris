@@ -145,6 +145,15 @@ export default class Grid extends BaseModel {
     }
   }
 
+  /**
+   * Runs the game loop for the Tetris game.
+   *
+   * @param socket - The socket object for communication with the client.
+   * @param roomId - The ID of the room where the game is being played.
+   * @param playerId - The ID of the player.
+   * @param username - The username of the player.
+   * @param gameSpeed - The speed of the game loop.
+   */
   public gameLoop(
     socket: Socket,
     roomId: string,
