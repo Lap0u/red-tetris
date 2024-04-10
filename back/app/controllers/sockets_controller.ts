@@ -76,6 +76,7 @@ export const handlePlayerReady = async (
 ) => {
   const player = await User.findOrFail(data.userId)
   const playerGrids = await Grid.query().where('userId', player.id)
+  console.log('playerGrids', playerGrids[0].speed)
   const grid = playerGrids[playerGrids.length - 1]
   player.isDead = false
   await player.save()
@@ -84,6 +85,7 @@ export const handlePlayerReady = async (
     return
   }
   socket.emit('gameStarted')
+  console.log('grid.speed', grid.speed)
   grid.gameLoop(socket, data.room, player.id, player.username, grid.speed)
 }
 
@@ -98,6 +100,13 @@ export const handleGameStart = async (
 
   // game.save in promise to avoid race conditions with socket.to/emit gameStart
   const promise = new Promise(async (resolve) => {
+    const players = await game.related('users').query()
+
+    for (const player of players) {
+      const curGrid = await Grid.findByOrFail('userId', player.id)
+      curGrid.speed = gameSpeed[data.gameSpeed]
+      await curGrid.save()
+    }
     await game.save()
     resolve('game saved')
   })
@@ -105,15 +114,6 @@ export const handleGameStart = async (
     socket.to(data.room).emit('gameStart')
     socket.emit('gameStart')
   })
-
-  const players = await game.related('users').query()
-
-  for (const player of players) {
-    const playerGrids = await Grid.query().where('userId', player.id)
-    const curGrid = playerGrids[playerGrids.length - 1]
-    curGrid.speed = gameSpeed[data.gameSpeed]
-    await curGrid.save()
-  }
 }
 
 export const handleGameSpeed = async (
