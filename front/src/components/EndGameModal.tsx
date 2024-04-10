@@ -8,21 +8,27 @@ import { User } from '../dto/User';
 type EndGameModalProps = {
   isWinner: boolean;
   score: number;
-  owner: User;
-  isOwner: boolean;
+  owner: User | undefined;
+  user: User;
 };
 
-const EndGameModal: React.FC<EndGameModalProps> = ({ isWinner, score, owner, isOwner }) => {
+const EndGameModal: React.FC<EndGameModalProps> = ({
+  isWinner,
+  score,
+  owner,
+  user,
+}) => {
   const navigate = useNavigate();
   const handleRestart = async () => {
+    if (!owner) return;
     createGame(owner.id).then((newGameId) => {
       socket.emit('redirectRestartPlayers', { gameId: newGameId });
-      navigate(`/pregame/${newGameId}/${owner.username}`);
-    })
-  }
+      navigate(`/pregame/${newGameId}/${user.username}`);
+    });
+  };
   const handleRedirectRestart = (newGameId: string) => {
-    navigate(`/pregame/${newGameId}/${owner.username}`);
-  }
+    navigate(`/pregame/${newGameId}/${user.username}`);
+  };
 
   useEffect(() => {
     socket.on('redirectRestart', handleRedirectRestart);
@@ -42,11 +48,8 @@ const EndGameModal: React.FC<EndGameModalProps> = ({ isWinner, score, owner, isO
       </p>
       <p>You scored {score} points</p>
       <div className="flex justify-center gap-x-4">
-        {isOwner && (
-          <MyButton
-              text="Restart Game"
-              onClick={handleRestart}
-          />
+        {owner && user.socketId === owner.socketId && (
+          <MyButton text="Restart Game" onClick={handleRestart} />
         )}
         <MyButton
           text="Return to Lobby"

@@ -24,13 +24,12 @@ const GamePage = ({ user }: { user: User }) => {
   });
   const [othersGrid, setOthersGrid] = useState<userGameGrid[]>([]);
   const [isWinner, setIsWinner] = useState<boolean>(false);
-  const [isOwner, setIsOwner] = useState<boolean>(false);
   const [owner, setOwner] = useState<User>();
   useEffect(() => {
     const handleGameEnd = ({
       userId,
       score,
-      owner
+      owner,
     }: {
       userId: number;
       score: number;
@@ -40,8 +39,7 @@ const GamePage = ({ user }: { user: User }) => {
         setIsWinner(true);
         setPlayerScore(score);
       }
-      setOwner(owner)
-      setIsOwner(user.id === owner.id);
+      setOwner(owner);
       setOpen(true);
     };
 
@@ -158,7 +156,7 @@ const GamePage = ({ user }: { user: User }) => {
             isWinner={isWinner}
             score={playerScore}
             owner={owner}
-            isOwner={isOwner}
+            user={user}
           />
         </div>
       </Modal>
