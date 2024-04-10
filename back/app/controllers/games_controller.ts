@@ -16,7 +16,12 @@ export default class GamesController {
   async get({ params, response }: HttpContext) {
     const { gameId } = params
     const game = await Game.findOrFail(gameId)
-    return response.json(game)
+    console.log('game contr', game)
+    const players = await game.related('users').query()
+    console.log('players', players)
+    const sockets = players.map((player) => player.socket_id)
+    console.log('sockets', sockets)
+    return response.json({ game, sockets })
   }
 
   async getAvailable({ response }: HttpContext) {

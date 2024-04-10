@@ -6,6 +6,7 @@ const getGame = async (id: string) => {
     if (status !== 200) {
       throw new Error('Failed to get a game');
     }
+    console.log('getgame', data);
     return data;
   } catch (error) {
     return null;
