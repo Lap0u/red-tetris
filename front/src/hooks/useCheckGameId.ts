@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import getGame from '../fetch/getGame';
+import { User } from '../dto/User';
 
-const useCheckGameId = (user: string) => {
+const useCheckGameId = (user: User) => {
   const { gameId, username } = useParams();
   const location = useLocation();
 
@@ -13,12 +14,15 @@ const useCheckGameId = (user: string) => {
         navigate('/lobby');
         return;
       }
-      if (user !== username) {
+      if (user.username !== username) {
         navigate('/busy');
         return;
       }
-
-      const { id, status } = await getGame(gameId);
+      const { game, sockets } = await getGame(gameId);
+      const { id, status } = game;
+      console.log('socketssss', sockets, user.socketId);
+      if (sockets === undefined || !sockets.includes(user.socketId))
+        navigate('/busy');
       if (!id) {
         navigate('/lobby');
       }

@@ -15,7 +15,7 @@ const GamePage = ({ user }: { user: User }) => {
   const [open, setOpen] = useState(false);
   const [playerScore, setPlayerScore] = useState<number>(0);
   const handleClose = () => setOpen(false);
-  useCheckGameId(user.username);
+  useCheckGameId(user);
 
   const [grid, setGrid] = useState<userGameGrid>({
     username: '',

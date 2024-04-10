@@ -16,7 +16,7 @@ const PregamePage = ({ user }: { user: User }) => {
   const [notGameOwner, setNotGameOwner] = useState(false);
   const [gameSpeed, setGameSpeed] =
     useState<AvailableGameSpeed>('intermediate');
-  useCheckGameId(user.username);
+  useCheckGameId(user);
   useEffect(() => {
     if (user.username !== username) {
       navigate('/lobby');

@@ -7,7 +7,6 @@ import { RootState } from '../store/store';
 import { Game } from '../dto/Game';
 import { socket } from '../App';
 import { User } from '../dto/User';
-import { getOwnerName } from '../utils/getOwnerName';
 
 const CurrentGamesList = () => {
   const [games, setGames] = useState<Game[]>([]);
@@ -24,17 +23,17 @@ const CurrentGamesList = () => {
     socket.emit('askGetOwners');
     socket.on('getOwners', (ownersIdsNames) => {
       setOwners([...ownersIdsNames]);
-    })
+    });
     const handleGameCreated = () => {
       getGames();
       socket.emit('askGetOwners');
-    }
+    };
     socket.on('gameCreated', handleGameCreated);
 
     return () => {
       socket.off('gameCreated', handleGameCreated);
       socket.off('getOwners');
-    }
+    };
   }, []);
 
   const joinGame = (gameId: string) => {
@@ -42,9 +41,11 @@ const CurrentGamesList = () => {
   };
 
   const getOwnerName = (gameUserId: number) => {
-    const ownerIndex = owners.findIndex((owner: User) => owner.id === gameUserId);
+    const ownerIndex = owners.findIndex(
+      (owner: User) => owner.id === gameUserId
+    );
     return owners[ownerIndex]?.username;
-  }
+  };
 
   return (
     <>
