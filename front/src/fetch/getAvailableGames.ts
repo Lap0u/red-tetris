@@ -1,17 +1,16 @@
-import axiosInstance from "../axios/axios";
+import axiosInstance from '../axios/axios';
 
 const getAvailableGames = async () => {
   try {
     const { status, data } = await axiosInstance.get('game/available');
     if (status !== 200) {
-      throw new Error("Failed to get available games");
+      throw new Error('Failed to get available games');
     }
+    console.log('data', data);
     return data;
-  }
-  catch (error) {
+  } catch (error) {
     return null;
   }
-
 };
 
 export default getAvailableGames;

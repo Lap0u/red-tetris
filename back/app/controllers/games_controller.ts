@@ -24,6 +24,7 @@ export default class GamesController {
 
   async getAvailable({ response }: HttpContext) {
     const games = await Game.query().where('status', 'waiting')
+    console.log('game response', games)
     return response.json(games)
   }
 }

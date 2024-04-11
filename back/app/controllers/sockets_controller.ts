@@ -101,6 +101,7 @@ export const handleGameStart = async (
   const game = await Game.findOrFail(data.room)
   const user = await User.findOrFail(data.userId)
   if (user.id !== game.userId) return // user is not owner of the game`
+  socket.local.emit('gameListUpdate')
   game.status = 'playing'
 
   // game.save in promise to avoid race conditions with socket.to/emit gameStart
@@ -179,7 +180,7 @@ export const handleEndGame = async (socket: Socket, roomId: string, userId: numb
 }
 
 export const handleInformGameCreated = (socket: Socket) => {
-  socket.local.emit('gameCreated')
+  socket.local.emit('gameListUpdate')
 }
 
 export const handleRedirectRestartPlayers = (
@@ -187,6 +188,6 @@ export const handleRedirectRestartPlayers = (
   oldGameId: string,
   newGameId: string
 ) => {
-  socket.local.emit('gameCreated')
+  socket.local.emit('gameListUpdate')
   socket.to(oldGameId).emit('redirectRestart', newGameId)
 }

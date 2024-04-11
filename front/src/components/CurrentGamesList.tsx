@@ -20,7 +20,9 @@ const CurrentGamesList = () => {
 
   useEffect(() => {
     const getGames = async () => {
+      console.log('getGames called');
       getAvailableGames().then((data) => {
+        console.log('then data', data);
         setGames(data);
         socket.emit('askGetOwners');
       });
@@ -29,12 +31,12 @@ const CurrentGamesList = () => {
     socket.on('getOwners', (ownersIdsNames) => {
       setOwners([...ownersIdsNames]);
     });
-    socket.on('gameCreated', getGames);
+    socket.on('gameListUpdate', getGames);
     socket.on('playerCanJoin', handlePlayerCanJoin);
 
     return () => {
       socket.off('playerCanJoin', handlePlayerCanJoin);
-      socket.off('gameCreated', getGames);
+      socket.off('gameListUpdate', getGames);
       socket.off('getOwners');
     };
   }, []);
