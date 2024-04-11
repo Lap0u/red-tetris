@@ -7,5 +7,5 @@ test('Get game working', async ({ client }) => {
   response.assertStatus(200)
   const getResponse = await client.get(`/game/${id}`)
   getResponse.assertStatus(200)
-  getResponse.assertBodyContains({ status: 'waiting' })
+  getResponse.assertBodyContains({ game: { status: 'waiting' } })
 })

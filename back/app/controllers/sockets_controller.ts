@@ -64,15 +64,9 @@ export const handleRoomLeave = async (socket: Socket, userId: number) => {
   const games = await user.related('games').query()
   if (!games) return
   for (const game of games) {
-    await user.related('games').detach([game.id])
-    const players = await game.related('users').query()
-    //TODO check si le joueur est le master et si oui en designer un autre et utiliser son socket pour prevenir la room
-    if (players.length === 0) {
-      game.status = 'finished'
-      await game.save()
-      return
-    }
-    socket.local.emit('playerLeftRoom', userId)
+    game.status = 'finished'
+    await game.save()
+    socket.to(game.id).emit('gameEnd', { userId: userId, score: 0, owner: user })
   }
 }
 export const handlePlayerReady = async (

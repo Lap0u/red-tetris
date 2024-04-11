@@ -9,6 +9,9 @@ const createUser = async (username: string, socketId: string | undefined) => {
     const { status, data } = await axiosInstance.post('user/create', {
        username: username, socketId: socketId
     });
+    if (status === 400) {
+      return { message: 'Username is empty' };
+    }
     if (status === 409) {
       return { message: 'Username already exists' };
     }

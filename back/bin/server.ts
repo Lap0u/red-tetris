@@ -33,12 +33,7 @@ export const io = new Server({
 io.listen(3334)
 io.on('connection', (socket) => {
   let userId: number | null = null
-
-  socket.on('registerUser', (data) => {
-    userId = data.userId
-    // Here you can associate the userId with the socket.id
-    // For example, using a Map or an object to keep track
-  })
+  console.log('user connected', socket.id)
 
   socket.on('askSetGameSpeed', (data) => {
     handleGameSpeed(socket, data)

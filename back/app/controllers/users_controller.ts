@@ -4,6 +4,9 @@ import { HttpContext } from '@adonisjs/core/http'
 export default class UsersController {
   async create({ request, response }: HttpContext) {
     const { username, socketId } = request.all()
+    if (!username || username.trim() === '') {
+      return response.status(400).json({ message: 'Username is empty' })
+    }
     const userExists = await User.findBy('username', username)
     if (userExists) {
       return response.status(409).json({ message: 'Username already exists' })

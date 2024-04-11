@@ -137,7 +137,7 @@ export default class Grid extends BaseModel {
     return currentPiece
   }
 
-  private handleSetIndestructible(nbIndestructible: number) {
+  public handleSetIndestructible(nbIndestructible: number) {
     if (nbIndestructible <= 0) return
     for (let i = 0; i < nbIndestructible - 1; i++) {
       this.grid.shift()

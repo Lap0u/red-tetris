@@ -27,6 +27,21 @@ const WelcomePage = ({ user }: { user: User | null }) => {
   };
 
   const handleButtonClick = async () => {
+    if (username.trim() === '') {
+      toast.error('Username is empty', {
+        toastId: 'username-empty',
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'colored',
+        transition: Bounce,
+      });
+      return;
+    }
     const user = await createUser(username, socket.id);
     if (!user) {
       toast.error('User already exists', {
