@@ -40,10 +40,6 @@ const PregamePage = ({ user }: { user: User }) => {
     socket.on('playerLeftPreGame', (playerId) => {
       setPlayers((prev) => prev.filter((player) => player.id !== playerId));
     });
-    socket.on(`roomFull`, () => {
-      alert('Room is full');
-      navigate('/lobby');
-    });
     socket.on(`gameOwner`, () => {
       setGameOwner(true);
     });
@@ -54,7 +50,6 @@ const PregamePage = ({ user }: { user: User }) => {
       socket.off('gameStart');
       socket.off('playerJoined');
       socket.off('playerLeftRoom');
-      socket.off('roomFull');
       socket.off('notOwner');
     };
   }, [gameId, navigate, user.username, user.id, username]);

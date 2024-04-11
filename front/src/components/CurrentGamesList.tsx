@@ -14,31 +14,34 @@ const CurrentGamesList = () => {
   const user = useSelector((state: RootState) => state.users.user);
   const navigate = useNavigate();
 
+  const handlePlayerCanJoin = (roomId: string) => {
+    navigate(`/pregame/${roomId}/${user?.username}`);
+  };
+
   useEffect(() => {
     const getGames = async () => {
-      const data = await getAvailableGames();
-      setGames(data);
+      getAvailableGames().then((data) => {
+        setGames(data);
+        socket.emit('askGetOwners');
+      });
     };
     getGames();
-    socket.emit('askGetOwners');
     socket.on('getOwners', (ownersIdsNames) => {
       setOwners([...ownersIdsNames]);
     });
-    const handleGameCreated = () => {
-      getGames();
-      socket.emit('askGetOwners');
-    };
-    socket.on('gameCreated', handleGameCreated);
+    socket.on('gameCreated', getGames);
+    socket.on('playerCanJoin', handlePlayerCanJoin);
 
     return () => {
-      socket.off('gameCreated', handleGameCreated);
+      socket.off('playerCanJoin', handlePlayerCanJoin);
+      socket.off('gameCreated', getGames);
       socket.off('getOwners');
     };
   }, []);
 
   const joinGame = (gameId: string) => {
     socket.emit('joinRoom', { room: gameId, userId: user?.id });
-    navigate(`/pregame/${gameId}/${user?.username}`);
+    // navigate(`/pregame/${gameId}/${user?.username}`);
   };
 
   const getOwnerName = (gameUserId: number) => {

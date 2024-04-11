@@ -18,20 +18,26 @@ export const handleRoomJoin = async (socket: Socket, roomId: string, userId: num
     const game = await Game.findOrFail(roomId)
     game.status = 'waiting'
     await game.save()
-    const user = await User.findOrFail(userId)
-    await user.related('games').save(game)
     const players = await game.related('users').query()
     console.log('players length', players.length)
-    if (players.length === 4) {
+    if (players.length >= 4) {
       socket.emit('roomFull')
       return
     }
-    if (game.userId === userId) {
-      socket.emit('gameOwner')
-    }
-    socket.join(roomId)
-    socket.to(roomId).emit('playerJoined', players)
-    socket.emit('playerJoined', players)
+    const user = await User.findOrFail(userId)
+    user
+      .related('games')
+      .save(game)
+      .then(async () => {
+        socket.join(roomId)
+        socket.emit('playerCanJoin', roomId)
+        if (game.userId === userId) {
+          socket.emit('gameOwner')
+        }
+        const newPlayers = await game.related('users').query()
+        socket.to(roomId).emit('playerJoined', newPlayers)
+        socket.emit('playerJoined', newPlayers)
+      })
   } catch (error) {
     console.error('Error while joining room', error)
   }
@@ -135,11 +141,7 @@ export const handleGetOwners = async (socket: Socket) => {
   socket.emit('getOwners', ownerIdsNames)
 }
 
-const savePlayerEndGameAndReturnScore = async (
-  curUser: User,
-  socket: Socket,
-  owner: User | undefined
-) => {
+const savePlayerEndGameAndReturnScore = async (curUser: User, socket: Socket, owner: User) => {
   const { id, username } = curUser
   const lastPlayerGrid = await Grid.findByOrFail('userId', id)
   lastPlayerGrid.gameStatus = 'ended'
@@ -152,25 +154,28 @@ const savePlayerEndGameAndReturnScore = async (
 
 export const handleEndGame = async (socket: Socket, roomId: string, userId: number) => {
   const game = await Game.findOrFail(roomId)
-  const players = await game.related('users').query()
-  const currPlayer = players.find((player) => player.id === userId)
-  if (!currPlayer) return
-  currPlayer.isDead = true
-  await currPlayer.save()
-  const playersLeft = players.filter((player) => player.isDead === false)
-  const owner = players.find((player) => player.id === game.userId)
-  if (playersLeft.length === 1 || players.length === 1) {
-    if (players.length === 1) {
-      await savePlayerEndGameAndReturnScore(players[0], socket, owner)
-      // await Score.create(score)
-    } else {
-      const score = await savePlayerEndGameAndReturnScore(playersLeft[0], socket, owner)
-      socket.to(roomId).emit('gameEnd', { userId: playersLeft[0].id, score: score.score })
-      await Score.create(score)
-    }
-    game.status = 'finished'
-    await game.save()
-  }
+  game
+    .related('users')
+    .query()
+    .then(async (players) => {
+      const currPlayer = players.find((player) => player.id === userId)
+      if (!currPlayer) return
+      currPlayer.isDead = true
+      await currPlayer.save()
+      const playersLeft = players.filter((player) => player.isDead === false)
+      const owner = players.find((player) => player.id === game.userId)
+      if (!owner) return
+      if (players.length === 1) {
+        await savePlayerEndGameAndReturnScore(players[0], socket, owner)
+      }
+      if (playersLeft.length === 1) {
+        const score = await savePlayerEndGameAndReturnScore(playersLeft[0], socket, owner)
+        socket.to(roomId).emit('gameEnd', { userId: playersLeft[0].id, score: score.score, owner })
+        await Score.create(score)
+        game.status = 'finished'
+        await game.save()
+      }
+    })
 }
 
 export const handleInformGameCreated = (socket: Socket) => {
