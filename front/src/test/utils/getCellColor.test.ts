@@ -13,16 +13,17 @@ describe('getCellColor', () => {
       'bg-[#00FF00]',
       'bg-[#FF00FF]',
       'bg-gradient-to-br from-[#FF00FF] via-gray-500 to-[#FF00FF]',
+      'bg-teal-300',
     ];
 
     for (let i = 1; i <= 9; i++) {
-      const color = getCellColor(i);
+      const color = getCellColor(i, 'bg-teal-300');
       expect(color).toBe(cellColors[i - 1]);
     }
   });
 
   it('should return gray for invalid cell value', () => {
-    const color = getCellColor(10);
-    expect(color).toBe('bg-gray-500');
+    const color = getCellColor(10, 'bg-teal-300');
+    expect(color).toBe('bg-teal-300');
   });
 });

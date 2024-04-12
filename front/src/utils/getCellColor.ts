@@ -1,4 +1,4 @@
-export const getCellColor = (cell: number) => {
+export const getCellColor = (cell: number, gridColor: string) => {
   switch (cell) {
     case 1:
       return 'bg-[#00FFFF]';
@@ -19,6 +19,6 @@ export const getCellColor = (cell: number) => {
     case 9:
       return 'bg-gradient-to-br from-[#FF00FF] via-gray-500 to-[#FF00FF]';
     default:
-      return 'bg-gray-500';
+      return gridColor;
   }
 };

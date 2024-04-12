@@ -6,7 +6,6 @@ const getAvailableGames = async () => {
     if (status !== 200) {
       throw new Error('Failed to get available games');
     }
-    console.log('data', data);
     return data;
   } catch (error) {
     return null;

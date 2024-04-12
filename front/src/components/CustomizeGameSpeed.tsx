@@ -14,7 +14,7 @@ const CustomizeGameSpeed = ({
   userId,
 }: CustomizeGameSpeedProps) => {
   return (
-    <div className="flex flex-col gap-y-12 justify-center items-center">
+    <div className="flex gap-x-12 justify-center items-center">
       <div
         onClick={() => handleGameSpeed(socket, gameId, userId, 'beginner')}
         className={

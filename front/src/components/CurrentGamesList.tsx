@@ -20,9 +20,7 @@ const CurrentGamesList = () => {
 
   useEffect(() => {
     const getGames = async () => {
-      console.log('getGames called');
       getAvailableGames().then((data) => {
-        console.log('then data', data);
         setGames(data);
         socket.emit('askGetOwners');
       });

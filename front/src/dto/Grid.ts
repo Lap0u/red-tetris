@@ -5,3 +5,8 @@ export type userGameGrid = {
   playerDead: boolean;
   invisible?: boolean;
 };
+
+export type AvailableGridColors =
+  | 'bg-gray-600'
+  | 'bg-emerald-400'
+  | 'bg-teal-300';

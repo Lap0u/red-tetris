@@ -80,7 +80,7 @@ const App = () => {
           path="/busy"
           element={
             <ProtectedRoute isAuthLoading={isAuthLoading} user={user}>
-              <BusyGame />
+              <BusyGame user={user as User} />
             </ProtectedRoute>
           }
         />

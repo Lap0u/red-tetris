@@ -28,7 +28,7 @@ describe('Busy', () => {
     render(
       <Provider store={store}>
         <BrowserRouter>
-          <BusyGame />
+          <BusyGame user={{ id: 1, username: 'lol' }} />
         </BrowserRouter>
       </Provider>
     );
@@ -43,7 +43,7 @@ describe('Busy', () => {
     const { getByText } = render(
       <Provider store={store}>
         <BrowserRouter>
-          <BusyGame />
+          <BusyGame user={{ id: 1, username: 'lol' }} />
         </BrowserRouter>
       </Provider>
     );

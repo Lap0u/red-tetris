@@ -153,7 +153,6 @@ export default class PieceService {
     if (rotation === 'right') this.#rotateMatrixRight()
   }
   #rotateMatrixLeft() {
-    console.log('rotating left')
     const rows = this.shape.length
     const cols = this.shape[0].length
     const newMatrix: number[][] = Array.from({ length: cols }, () => [])
@@ -169,8 +168,6 @@ export default class PieceService {
   }
 
   #rotateMatrixRight() {
-    console.log('rotating right')
-
     const rows = this.shape.length
     const cols = this.shape[0].length
     const newMatrix: number[][] = Array.from({ length: cols }, () => [])

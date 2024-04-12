@@ -16,25 +16,38 @@ export default class UsersController {
   }
 
   async remove({ request, response }: HttpContext) {
-    const { socketId } = request.all()
-    const user = await User.findByOrFail('socket_id', socketId)
-    if (user.socket_id !== socketId) return
-    const games = await user.related('games').query()
-    for (const game of games) {
-      await user.related('games').detach([game.id])
-      const players = await game.related('users').query()
-      if (players.length === 0) {
-        game.status = 'finished'
-        await game.save()
+    try {
+
+      const { socketId } = request.all()
+      const user = await User.findByOrFail('socket_id', socketId)
+      if (user.socket_id !== socketId) return
+      const games = await user.related('games').query()
+      for (const game of games) {
+        await user.related('games').detach([game.id])
+        const players = await game.related('users').query()
+        if (players.length === 0) {
+          game.status = 'finished'
+          await game.save()
+        }
       }
+      await user.save()
+      return response.json(user)
     }
-    await user.save()
-    return response.json(user)
+    catch (error) {
+      return response.status(404).json({ message: 'User not found' })
+    }
   }
 
   async get({ response, params }: HttpContext) {
-    const { id } = params
-    const user = await User.find(id)
-    return response.json(user)
+    try {
+
+      const { id } = params
+      const user = await User.find(id)
+      return response.json(user)
+    }
+    catch (error) {
+      return response.status(404).json({ message: 'User not found' })
+    }
   }
+
 }

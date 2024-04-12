@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import usersReducer from './usersSlice';
+import gridColorReducer from './gridColorSlice';
 
 const store = configureStore({
   reducer: {
     //   posts: postsReducer,
     //   comments: commentsReducer,
     users: usersReducer,
+    gridColor: gridColorReducer,
   },
 });
 

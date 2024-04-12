@@ -8,6 +8,8 @@ import useCheckGameId from '../hooks/useCheckGameId';
 import { AvailableGameSpeed } from '../dto/AvailableGameSpeed';
 import CustomizeGameSpeed from '../components/CustomizeGameSpeed';
 import createGrids from '../fetch/createGrids';
+import { AvailableGridColors } from '../dto/Grid';
+import CustomizeGrid from '../components/CustomizeGrid';
 
 const PregamePage = ({ user }: { user: User }) => {
   const { gameId, username } = useParams();
@@ -16,6 +18,9 @@ const PregamePage = ({ user }: { user: User }) => {
   const [gameOwner, setGameOwner] = useState(false);
   const [gameSpeed, setGameSpeed] =
     useState<AvailableGameSpeed>('intermediate');
+  const [gridColor, setGridColor] =
+    useState<AvailableGridColors>('bg-gray-600');
+
   useCheckGameId(user);
   useEffect(() => {
     if (user.username !== username) {
@@ -59,7 +64,20 @@ const PregamePage = ({ user }: { user: User }) => {
     });
   };
   return (
-    <div className="w-screen h-screen gap-x-32 flex justify-center items-center">
+    <div className="flex flex-col gap-y-24 justify-center items-center h-screen">
+      <h1 className="text-4xl text-red-500 font-bold">Pregame</h1>
+      <div
+        className="flex justify-center items-center gap-x-12
+      h-fit">
+        <MyButton onClick={startGame} text="Start Game" disabled={!gameOwner} />
+        {!gameOwner && (
+          <p className="w-48 text-red-500 text-xs text-center">
+            Wait for the game's owner to launch...
+          </p>
+        )}
+        <PlayersList players={players} />
+      </div>
+      <CustomizeGrid gridColor={gridColor} setGridColor={setGridColor} />
       {gameOwner && (
         <CustomizeGameSpeed
           gameSpeed={gameSpeed}
@@ -67,17 +85,6 @@ const PregamePage = ({ user }: { user: User }) => {
           userId={user.id}
         />
       )}
-      <div
-        className="flex flex-col justify-center items-center
-      h-fit gap-y-4">
-        <MyButton onClick={startGame} text="Start Game" disabled={!gameOwner} />
-        {!gameOwner && (
-          <p className="w-48 text-red-500 text-xs text-center">
-            Wait for the game's owner to launch...
-          </p>
-        )}
-      </div>
-      <PlayersList players={players} />
     </div>
   );
 };

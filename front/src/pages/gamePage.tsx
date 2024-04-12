@@ -9,7 +9,13 @@ import OthersGrid from '../components/OthersGrid';
 import useCheckGameId from '../hooks/useCheckGameId';
 import EndGameModal from '../components/EndGameModal';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
+
 const GamePage = ({ user }: { user: User }) => {
+  const colorGrid = useSelector(
+    (state: RootState) => state.gridColor.gridColor
+  );
   const { gameId } = useParams();
   const gameAreaRef = useRef<HTMLDivElement>(null); // Create a ref for the game area div
   const [open, setOpen] = useState(false);
@@ -148,7 +154,7 @@ const GamePage = ({ user }: { user: User }) => {
         style={{ outline: 'none' }} // Optional: Remove focus outline for aesthetics
       >
         {othersGrid.length !== 0 && <OthersGrid usersGamesGrids={othersGrid} />}
-        <GameGrid userGameGrid={grid} />
+        <GameGrid userGameGrid={grid} gridColor={colorGrid} />
       </div>
       <Modal open={open} onClose={handleClose}>
         <div className="flex justify-center items-center h-full bg-gray-900 bg-opacity-75">

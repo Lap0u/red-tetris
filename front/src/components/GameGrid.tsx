@@ -1,12 +1,14 @@
-import { userGameGrid } from '../dto/Grid';
+import { AvailableGridColors, userGameGrid } from '../dto/Grid';
 import { getCellColor } from '../utils/getCellColor';
 
 const GameGrid = ({
   userGameGrid,
   small = false,
+  gridColor = 'bg-gray-600',
 }: {
   userGameGrid: userGameGrid;
   small?: boolean;
+  gridColor: AvailableGridColors;
 }) => {
   const gridHeight = 20;
   const gridWidth = 10;
@@ -28,13 +30,16 @@ const GameGrid = ({
               {row.map((cell, x) => (
                 <div
                   key={y + '-' + x}
-                  className={`${cellSize} border ${getCellColor(cell)}`}
+                  className={`${cellSize} border ${getCellColor(
+                    cell,
+                    gridColor
+                  )}`}
                 />
               ))}
               {Array.from({ length: gridWidth - row.length }).map((_, x) => (
                 <div
                   key={'empty-' + y + '-' + x}
-                  className={`${cellSize} border bg-gray-500`}
+                  className={`${cellSize} border ${gridColor}`}
                 />
               ))}
             </div>
@@ -45,7 +50,7 @@ const GameGrid = ({
                 {Array.from({ length: gridWidth }).map((_, x) => (
                   <div
                     key={'empty-' + y + '-' + x}
-                    className={`${cellSize} border bg-gray-500`}
+                    className={`${cellSize} border ${gridColor}`}
                   />
                 ))}
               </div>

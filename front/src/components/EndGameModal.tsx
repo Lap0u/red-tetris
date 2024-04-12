@@ -31,7 +31,6 @@ const EndGameModal: React.FC<EndGameModalProps> = ({
     });
   };
   const handleRedirectRestart = (newGameId: string) => {
-    console.log('redirecting to new game', newGameId);
     socket.emit('joinRoom', { room: newGameId, userId: user?.id });
 
     navigate(`/pregame/${newGameId}/${user.username}`);

@@ -45,6 +45,9 @@ io.on('connection', (socket) => {
   socket.on('leaveGame', (data) => {
     handlePreGameLeave(socket, data)
   })
+  socket.on('clearAllGames', (data) => {
+    handleRoomLeave(socket, data.userId)
+  })
   socket.on('disconnect', () => {
     // Now you can use the userId that was associated with this socket
     if (userId) {

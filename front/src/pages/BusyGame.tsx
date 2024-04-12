@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import MyButton from '../components/MyButton';
 import { useNavigate } from 'react-router-dom';
+import { socket } from '../App';
+import { User } from '../dto/User';
 
-const BusyGame: React.FC = () => {
+type BusyProps = {
+  user: User;
+};
+
+const BusyGame: React.FC<BusyProps> = ({ user }: BusyProps) => {
   const navigate = useNavigate();
+  useEffect(() => {
+    socket.emit('clearAllGames', { userId: user.id });
+  }, [user.id]);
   return (
     <div className="w-100 h-screen flex flex-col justify-center items-center">
       <h1 className="text-5xl text-red-500 font-bold">

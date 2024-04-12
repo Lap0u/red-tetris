@@ -201,12 +201,10 @@ export default class Grid extends BaseModel {
         const lines = this.checkLines()
         // ** On fake le score en attendant d'avoir des mouvements fonctionnels **
         if (lines.length >= 4) {
-          console.log('invisible', lines.length)
           invisible = true
           invisibleDelay = 25 // 25 * 200ms = 5s (pour la vitesse par défaut)
         }
         if (lines.length > 0) {
-          console.log('lines', lines.length, this.scoreMap[lines.length])
           Grid.findByOrFail('userId', playerId).then((grid) => {
             grid.score += this.scoreMap[lines.length]
             grid.save()

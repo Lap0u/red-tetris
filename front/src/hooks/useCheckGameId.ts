@@ -15,29 +15,23 @@ const useCheckGameId = (user: User) => {
         return;
       }
       if (user.username !== username) {
-        console.log('user.username !== username');
         navigate('/busy');
         return;
       }
       const { game, sockets } = await getGame(gameId);
       const { id, status } = game;
-      console.log('socketssss', sockets, user.socketId);
       if (sockets === undefined || !sockets.includes(user.socketId)) {
-        console.log('sockets === undefined');
         navigate('/busy');
-      }
-      else if (!id) {
+      } else if (!id) {
         navigate('/lobby');
-      }
-      else if (status === 'finished') {
-        console.log('status === finished');
+      } else if (status === 'finished') {
         navigate('/busy');
-      }
-      else if (status === 'waiting' && location.pathname.includes('/game/')) {
+      } else if (status === 'waiting' && location.pathname.includes('/game/')) {
         navigate('/lobby');
-      }
-      else if (status === 'playing' && !location.pathname.includes('/game/')) {
-        console.log('status === playing');
+      } else if (
+        status === 'playing' &&
+        !location.pathname.includes('/game/')
+      ) {
         navigate(`/busy`);
       }
       return;
